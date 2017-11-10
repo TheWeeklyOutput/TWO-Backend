@@ -8,13 +8,14 @@ ALLOWED_HOSTS.append('localhost')
 ALLOWED_HOSTS.append('localhost:4000')
 ALLOWED_HOSTS.append('127.0.0.1:4000')
 
-#INSTALLED_APPS.append('debug_toolbar')
+INSTALLED_APPS.append('debug_toolbar')
 
 # cross origin
 INSTALLED_APPS.append('corsheaders')
 MIDDLEWARE += ['corsheaders.middleware.CorsMiddleware',
                'django.middleware.common.CommonMiddleware',
-               'backend.disable.DisableCSRF',]
+               'backend.disable.DisableCSRF',
+               'debug_toolbar.middleware.DebugToolbarMiddleware']
 
 SESSION_COOKIE_DOMAIN = '127.0.0.1'
 CORS_ALLOW_CREDENTIALS = True
