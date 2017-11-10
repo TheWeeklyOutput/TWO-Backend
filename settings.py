@@ -24,7 +24,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'webpack_loader',
     'rest_framework',
-    'backend.modules.core'
+    'backend.modules.corpora',
+    'backend.modules.mangler'
 ]
 
 SITE_ID = 1
@@ -36,10 +37,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
-ROOT_URLCONF = 'backend.modules.core.urls'
+ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
     {
@@ -104,7 +104,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'backend/dist')
 
 STATICFILES_DIRS = [
