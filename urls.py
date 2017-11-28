@@ -1,9 +1,10 @@
 
 from django.conf import settings
 from django.conf.urls import url, include
+import backend.modules.corpora.urls as corpora_urls 
 
 urlpatterns = [
-
+    url(r'^corpora/', include(corpora_urls))
 ]
 
 if settings.DEBUG:
