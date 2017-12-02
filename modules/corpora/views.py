@@ -14,4 +14,3 @@ class AddText(APIView):
             generated=False
         )
         return Response('Text added Successfully', status=status.HTTP_201_CREATED)
-

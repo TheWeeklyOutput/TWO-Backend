@@ -12,7 +12,8 @@ class Document(models.Model):
     sentiment = models.ForeignKey(Sentiment, blank=True, null=True)
 
     generated = models.BooleanField(default=False)
-    slug = models.CharField(max_length=100, default=uuid.uuid4(), unique=True)
+
+    headline = models.CharField(max_length=200, unique=True)
     content_type = models.CharField(max_length=20, default="generic")
     category = models.CharField(max_length=20, default="generic")
     outlet = models.CharField(max_length=20, default="generic")
@@ -97,4 +98,4 @@ class Token(models.Model):
     edge_index = models.IntegerField()
 
     def __str__(self):
-        return self.text_content
+        return self.text
