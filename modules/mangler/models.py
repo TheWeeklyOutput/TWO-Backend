@@ -1,5 +1,9 @@
 from django.db import models
+from picklefield.fields import PickledObjectField
 import uuid
+import json
+import re
+
 
 class Sentiment(models.Model):
     score = models.FloatField(blank=True, null=True)
@@ -20,7 +24,11 @@ class Document(models.Model):
 
     @property
     def url(self):
-        return '/documents/slug/'+'/'.join([self.slug])
+        return '/documents/slug/' + '/'.join([self.slug])
+
+    @property
+    def slug(self):
+        return '-'.join(re.sub('[^A-Za-z0-9\s]+', '', self.headline.lower()).split(' '))
 
     def __str__(self):
         return self.slug
@@ -68,9 +76,14 @@ class Entity(models.Model):
     def __str__(self):
         return self.entity_type + ' : ' + self.name
 
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+            sort_keys=True, indent=4)
+
 class TextSpan(models.Model):
     content = models.CharField(max_length=200)
     begin_offset = models.IntegerField()
+    vector = PickledObjectField()
 
     def __str__(self):
         return str(self.begin_offset) + ' : ' + self.content
@@ -79,6 +92,9 @@ class Mention(models.Model):
     text = models.OneToOneField(TextSpan, related_name='mention')
     entity = models.ForeignKey(Entity)
     mention_type = models.CharField(max_length=20)
+
+    def __str__(self):
+        return str(self.entity) + ' : ' + self.text.content
 
 class Token(models.Model):
     part_of_speech = models.ForeignKey(PartOfSpeech)
@@ -96,6 +112,8 @@ class Token(models.Model):
 
     edge_label = models.CharField(max_length=20)
     edge_index = models.IntegerField()
+
+    vector = PickledObjectField()
 
     def __str__(self):
         return self.text

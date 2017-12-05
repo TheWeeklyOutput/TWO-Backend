@@ -1,6 +1,8 @@
 from django.conf.urls import url, include
-from .views import AddText
+from .views import AddCorpus, GetCorpus
 
 urlpatterns = [
-    url(r'^add/', AddText.as_view())
+    url(r'^add/', AddCorpus.as_view()),
+    url(r'^get/(?P<slug>.[^\/]*)', GetCorpus.as_view())
+
 ]
