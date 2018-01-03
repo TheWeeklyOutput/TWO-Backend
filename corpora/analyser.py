@@ -1,7 +1,7 @@
 import spacy
 import random
 import re
-from backend.modules.mangler.models import *
+from backend.mangler.models import *
 
 class Analyser:
     def __init__(self):
@@ -13,8 +13,15 @@ class Analyser:
     def analyse_text(self, text):
         return self.nlp(text)
 
-    def save_analysed_text(self, analysed_text, **kwargs):
-        document = self.save_document(analysed_text, **kwargs)
+    def save_analysed_text(self, analysed_text, headline=None, **kwargs):
+        analysed_headline = list(self.analyse_text(headline).sents)[0]
+        headline = self.save_sentence(analysed_headline, None, -1, -1)
+        document, created = self.save_document(analysed_text, headline=headline, **kwargs)
+
+        if not created: 
+            print('Document already Exists')
+            return
+
         offset = 0
         for index, sentence in enumerate(analysed_text.sents):
             self.save_sentence(sentence, document, index, offset)
@@ -35,7 +42,8 @@ class Analyser:
             outlet=outlet,
             generated=generated
         )
-        return doc
+
+        return doc, created
 
     def save_sentence(self, sentence, document, index, offset):
         db_sentence, created = Sentence.objects.get_or_create(
@@ -43,22 +51,24 @@ class Analyser:
             token_offset=offset, content=sentence.text,
             begin=sentence.start
         )
-
+        print(sentence.text)
+        
         sentence_index = 0
         token_index = offset
         for token in sentence:
             self.save_token(token, document, db_sentence, token_index, sentence_index)
             token_index += 1
             sentence_index += 1
-
-    def save_token(self, token, document, sentence, index, sentence_index ):
+        return db_sentence
+        
+    def save_token(self, token, document, sentence, index, sentence_index):
         pos, created, = PartOfSpeech.objects.get_or_create(
             tag=token.tag, pos=token.pos
         )
         tok, created = Token.objects.get_or_create(
             part_of_speech=pos, edge_index=token.head.i,
             document=document, sentence=sentence,
-            document_index=index, sentence_index=sentence_index, 
+            document_index=index, sentence_index=sentence_index,
             lemma=token.lemma, text=token.text, text_begin=token.idx,
             vector=token.vector
         )
@@ -82,12 +92,12 @@ class Analyser:
         mention, created = Mention.objects.get_or_create(
             text=text, mention_type="", entity=db_entity
         )
-    
+
     def match_entity(self, entity, metadata):
         mention_text = entity.text
 
-        similar_contains = Entity.objects.filter(name__icontains=entity.text)
-        similar_in = Entity.objects.filter(name__in=entity.text)
+        similar_contains = Entity.objects.filter(name__icontains=mention_text)
+        similar_in = Entity.objects.filter(name__in=mention_text)
 
         similar = list(similar_contains) + list(similar_in)
 
@@ -98,13 +108,16 @@ class Analyser:
                 mention_words = mention_text.split(' ')
 
                 for w in words:
-                    for mw in words:
+                    for mw in mention_words:
                         if mw.lower() == w.lower():
-                            return s        
+                            return s
 
-        name = mention_text.replace('\'s', '')
+        name = self.clean_entity_name(mention_text)
         db_entity, created = Entity.objects.get_or_create(
-            name=mention_text, meta=metadata,
+            name=name, meta=metadata,
             entity_type=entity.label_,
-        )         
+        )
         return db_entity
+
+    def clean_entity_name(self, mention_text):
+        return mention_text.replace('\'s', '')

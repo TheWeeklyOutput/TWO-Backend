@@ -14,10 +14,10 @@ class Sentiment(models.Model):
 
 class Document(models.Model):
     sentiment = models.ForeignKey(Sentiment, blank=True, null=True)
+    headline = models.OneToOneField("Sentence", related_name="headline")
 
     generated = models.BooleanField(default=False)
 
-    headline = models.CharField(max_length=200, unique=True)
     content_type = models.CharField(max_length=20, default="generic")
     category = models.CharField(max_length=20, default="generic")
     outlet = models.CharField(max_length=20, default="generic")
@@ -28,13 +28,13 @@ class Document(models.Model):
 
     @property
     def slug(self):
-        return '-'.join(re.sub('[^A-Za-z0-9\s]+', '', self.headline.lower()).split(' '))
+        return '-'.join(re.sub('[^A-Za-z0-9\s]+', '', self.headline.content.lower()).split(' '))
 
     def __str__(self):
         return self.slug
 
 class Sentence(models.Model):
-    document = models.ForeignKey(Document)
+    document = models.ForeignKey(Document, null=True)
     sentiment = models.ForeignKey(Sentiment, blank=True, null=True)
 
     token_offset = models.IntegerField()
@@ -69,6 +69,7 @@ class Entity(models.Model):
     sentiment = models.ForeignKey(Sentiment, blank=True, null=True)
     meta = models.ForeignKey(EntityMetadata)
 
+    generated = models.BooleanField(default=False)
     name = models.CharField(max_length=100)
     entity_type = models.CharField(max_length=20)
     salience = models.FloatField(null=True)
@@ -89,7 +90,7 @@ class TextSpan(models.Model):
         return str(self.begin_offset) + ' : ' + self.content
 
 class Mention(models.Model):
-    text = models.OneToOneField(TextSpan, related_name='mention')
+    text = models.ForeignKey(TextSpan, related_name='mention')
     entity = models.ForeignKey(Entity)
     mention_type = models.CharField(max_length=20)
 
@@ -103,7 +104,7 @@ class Token(models.Model):
     text = models.CharField(max_length=100)
     text_begin = models.IntegerField()
 
-    document = models.ForeignKey(Document)
+    document = models.ForeignKey(Document, null=True)
     sentence = models.ForeignKey(Sentence)
     mention = models.ForeignKey(Mention, blank=True, null=True)
 

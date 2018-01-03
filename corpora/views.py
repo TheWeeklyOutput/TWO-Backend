@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from .analyser import Analyser
-from backend.modules.mangler.models import Document, Token, Entity
+from backend.mangler.models import Document, Token, Entity
 
 class AddCorpus(APIView):
     def post(self, request, *args, **kwargs):
@@ -26,19 +26,24 @@ class GetCorpus(APIView):
 
         doc = doc[0]
 
-        content = ''
-        tokens = list(Token.objects.filter(document=doc))
-        tokens.sort(key=lambda x: x.document_index)
-        for t in tokens:
-            content += t.text + ' '
+        content = self.doc_content(doc)
 
         entities = list(Entity.objects.filter(documents=doc))
         entities = [e.toJSON() for e in entities]
         data = {
-            'title': doc.headline,
+            'title': doc.headline.content,
             'text': content,
             'entities': entities
         }
         print(data)
 
         return Response(data, status=status.HTTP_200_OK)
+
+    def doc_content(self, doc):
+        content = ''
+        tokens = list(Token.objects.filter(document=doc))
+        tokens.sort(key=lambda x: x.document_index)
+        for t in tokens:
+            content += t.text + ' '
+        
+        return content
