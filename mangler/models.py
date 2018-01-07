@@ -21,6 +21,7 @@ class Document(models.Model):
     content_type = models.CharField(max_length=20, default="generic")
     category = models.CharField(max_length=20, default="generic")
     outlet = models.CharField(max_length=20, default="generic")
+    date = models.DateTimeField(auto_now_add=True)
 
     @property
     def url(self):
@@ -28,7 +29,9 @@ class Document(models.Model):
 
     @property
     def slug(self):
-        return '-'.join(re.sub('[^A-Za-z0-9\s]+', '', self.headline.content.lower()).split(' '))
+        string = self.date.strftime("%Y-%m-%d_%H-%M-%S")
+        string += ' ' + self.headline.content.lower()
+        return '-'.join(re.sub('[^A-Za-z0-9\s\\-_]+', '', string).split(' '))
 
     def __str__(self):
         return self.slug
@@ -39,8 +42,18 @@ class Sentence(models.Model):
 
     token_offset = models.IntegerField()
     document_index = models.IntegerField()
-    content = models.CharField(max_length=2000)
     begin = models.IntegerField()
+
+    @property
+    def content(self):
+        tokens = Token.objects.filter(sentence=self)
+
+        content = ''
+        for token in tokens:
+            if token.part_of_speech.tag != 'POS':
+                content += ' '
+            content += token.text
+        return content[1:]
 
     def __str__(self):
         return ' : '.join([str(self.begin), self.content])
@@ -110,6 +123,8 @@ class Token(models.Model):
 
     document_index = models.IntegerField()
     sentence_index = models.IntegerField()
+
+    ent_iob = models.CharField(max_length=2)
 
     edge_label = models.CharField(max_length=20)
     edge_index = models.IntegerField()
