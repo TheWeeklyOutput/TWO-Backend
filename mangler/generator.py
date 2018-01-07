@@ -19,19 +19,30 @@ class Generator:
 
     def clone_document(self):
         headline = self.document.headline
+        headline_tokens = Token.objects.filter(sentence=headline)
         headline.pk = None
         headline.save()
+
+        for headline_token in headline_tokens:
+            headline_token.pk = None
+            headline_token.sentence = headline
+            headline_token.save()
 
         self.document.headline = headline
         self.document.pk = None
         self.document.generated = True
         self.document.save()
 
+        self.clone_tokens()
+        self.clone_entities()
+    
+    def clone_tokens(self):
         for token in self.tokens:
             token.pk = None
             token.document = self.document
             token.save()
 
+    def clone_entities(self):
         for entity in self.entities:
             mentions = Mention.objects.filter(entity=entity)
 
@@ -49,11 +60,15 @@ class Generator:
 
     def generate(self):
         self.choose_entities()
+        print("headline")
         self.generate_sentence(self.document.headline)
+        print(self.document.headline.content)
+        print("other")
 
         for sentence in self.sentences:
             self.generate_sentence(sentence)
-        
+            print(sentence.content)
+
         return self.document
 
     def choose_entities(self):
@@ -75,6 +90,7 @@ class Generator:
             print()
 
             similar_entity.name = entity.name
+            similar_entity.pk = None
             similar_entity.generated = True
             similar_entity.save()
 
@@ -89,9 +105,15 @@ class Generator:
 
     def generate_sentence(self, sentence):
         tokens = self.tokens.filter(sentence=sentence)
+        mention = ''
+        print(tokens)
         for token in tokens:
-            print(token)
             mention = self.search_mention_for_token(token)
+            if token.ent_iob == "I" \
+                and token.part_of_speech.tag != "POS":
+                token.text = ""
+                token.save()
+
             if not mention:
                 continue
             token.text = mention.text.content

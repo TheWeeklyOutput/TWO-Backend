@@ -1,8 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .analyser import Analyser
 from backend.mangler.models import Document, Token, Entity
+from .analyser import Analyser
+from .crawler import Crawler
 
 class AddCorpus(APIView):
     def post(self, request, *args, **kwargs):
@@ -47,3 +48,7 @@ class GetCorpus(APIView):
             content += t.text + ' '
         
         return content
+
+class CrawlCorpus(APIView):
+    def get(self, request, *args, **kwargs):
+        Crawler().crawl_newest_articles()

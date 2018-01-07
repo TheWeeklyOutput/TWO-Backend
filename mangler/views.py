@@ -6,7 +6,7 @@ from .generator import Generator
 
 class Generate(APIView):
     def get(self, request, *args, category=None,**kwargs):
-        generator = Generator(category, "www.cnn.com")
+        generator = Generator(category, "cnn")
         doc = generator.generate()
 
         return HttpResponseRedirect("/corpora/get/" + doc.slug)

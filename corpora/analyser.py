@@ -16,9 +16,10 @@ class Analyser:
     def save_analysed_text(self, analysed_text, headline=None, **kwargs):
         analysed_headline = list(self.analyse_text(headline).sents)[0]
         headline = self.save_sentence(analysed_headline, None, -1, -1)
+        print(headline.content)
         document, created = self.save_document(analysed_text, headline=headline, **kwargs)
 
-        if not created: 
+        if not created:
             print('Document already Exists')
             return
 
@@ -46,13 +47,13 @@ class Analyser:
         return doc, created
 
     def save_sentence(self, sentence, document, index, offset):
-        db_sentence, created = Sentence.objects.get_or_create(
+        db_sentence = Sentence.objects.create(
             document=document, document_index=index,
-            token_offset=offset, content=sentence.text,
+            token_offset=offset,
             begin=sentence.start
         )
         print(sentence.text)
-        
+
         sentence_index = 0
         token_index = offset
         for token in sentence:
@@ -63,19 +64,18 @@ class Analyser:
         
     def save_token(self, token, document, sentence, index, sentence_index):
         pos, created, = PartOfSpeech.objects.get_or_create(
-            tag=token.tag, pos=token.pos
+            tag=token.tag_, pos=token.pos_
         )
         tok, created = Token.objects.get_or_create(
             part_of_speech=pos, edge_index=token.head.i,
             document=document, sentence=sentence,
             document_index=index, sentence_index=sentence_index,
             lemma=token.lemma, text=token.text, text_begin=token.idx,
-            vector=token.vector
+            vector=token.vector, ent_iob=token.ent_iob_
         )
 
     def save_entity(self, entity, document):
         # needs to be reworked to search knowledge
-        # and combine entities which are the same
 
         metadata, created = EntityMetadata.objects.get_or_create(
             wikipedia_url="", mid=""
