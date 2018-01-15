@@ -2,60 +2,50 @@ import os
 import pickle
 from google.cloud import language
 from google.gax import CallOptions
+from .models import Document, ContentType, Outlet, Category
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath("FakeNewsGen-d45b8ea85e8f.json")
 
-class CorporaManager:
-    def save_text(content_type, outlet, category, slug):
-class GoogleAnalysisManager:
-    def __init__(self, storage_root):
-        self.storage_root = storage_root
+def analyse_corpus(text, max_failures=5):        
+    if max_failures < 1: return
 
-    def load_multiple(self, to_load):
-        docs = []
-        for content_type, outlet, category in to_load:
-            docs.extend(self.load(content_type, outlet, category))
-        return docs
+    client = language.client.Client()
+    document = client.document_from_text(content=text, language='en')
 
-    def load(self, content_type, outlet, category):
-        super_dir = os.path.join(self.storage_root, content_type, outlet, category)
-        docs = []
-        for dir in os.listdir(super_dir):
-            dir = os.path.join(super_dir, dir)
-            docs.append(self.load_from_directory(dir))
-        return docs
+    try:
+        return document.annotate_text()
+    except:
+        print('Retrying... Max Failures: ' + max_failures-1)
+        return analyse_corpus(text, max_failures=max_failures-1)
 
-    def load_from_directory(self, dir_name):
-        print('Parseing', dir_name)
-        txt = ''
-        for file in os.listdir(dir_name):
-            file_path = os.path.join(dir_name,file)
-            if file.endswith('.pkl'):
-                return self.load_from_pkl(file_path)
-            elif file.endswith(".txt"):
-                txt = file_path
-        if txt != '':
-            return self.load_from_txt(txt)
+def save_corpus(annotations=None, **kwargs):
+    if annotations is None:
+        annotations = analyse_corpus(kwargs['content'])
 
-    def load_from_pkl(self, file_path):
-        with open(file_path, "rb") as file:
-            return pickle.load(file)
+    kwargs['content_type'], created = ContentType.objects.get_or_create(slug=kwargs['content_type'])
+    kwargs['outlet'], created = Outlet.objects.get_or_create(slug=kwargs['outlet'])
+    kwargs['category'], created = Category.objects.get_or_create(slug=kwargs['category'])
 
-    def load_from_txt(self, file_path):
-        with open(file_path, "r") as file:
-            file_string = file.read()
-            client = language.client.Client()
-            document = client.document_from_text(content=file_string, language='en')
+    print('Saved Document: ' + kwargs['headline'])
+    return Document.objects.create(annotations=annotations, **kwargs)
 
-        print('Sending text to Google ...')
+def load_corpora(random=False, **kwargs):
+    args = [
+        ('content_type', ContentType),
+        ('outlet', Outlet),
+        ('category', Category),
+    ]
+
+    for arg, c in args:
         try:
-            doc = document.annotate_text()
-        except:
-            return self.load_from_txt(file_path)
-        print('Writing .pkl ...')
+            kwargs[arg] = c.objects.get(slug=kwargs[arg])
+        except KeyError:
+            pass
 
-        with open(file_path[:-12]+'annotations.pkl', "wb") as file:
-            file.write(pickle.dumps(doc))
+    if random:
+        return Document.objects.filter(**kwargs).order_by('?')
+    return Document.objects.filter(**kwargs)
 
-        os.rename(file_path, file_path[:-3]+'out-txt')
-        return doc
+def load_newest():
+    newest = Document.objects.filter(generated=True).order_by('date')
+    return newest
