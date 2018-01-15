@@ -45,7 +45,3 @@ def load_corpora(random=False, **kwargs):
     if random:
         return Document.objects.filter(**kwargs).order_by('?')
     return Document.objects.filter(**kwargs)
-
-def load_newest():
-    newest = Document.objects.filter(generated=True).order_by('date')
-    return newest
