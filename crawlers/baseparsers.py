@@ -4,6 +4,7 @@ class BaseParser(HTMLParser):
     parseing = False
     content_useful = False
     content_headline = False
+    headline = ''
     data = []
 
     def check_content(self, tag, attrs):
@@ -25,15 +26,15 @@ class BaseParser(HTMLParser):
 
     def handle_data(self, data):
         if self.content_headline:
-            self.data.append('# ' + data + '\n')
+            self.headline = data
 
         if self.content_useful:
             self.data.append(data)
- 
+
     def get_data(self):
         while self.parseing:
             pass
         return self.data
 
-    def get_string(self):
+    def get_content(self):
         return NotImplementedError('Must be overridden by master class')

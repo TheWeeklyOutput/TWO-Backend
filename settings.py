@@ -24,8 +24,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'webpack_loader',
     'rest_framework',
-    'backend.corpora',
-    'backend.mangler'
+    'backend.crawlers',
+    'backend.generator'
 ]
 
 SITE_ID = 1
