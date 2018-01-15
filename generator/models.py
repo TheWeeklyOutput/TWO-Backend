@@ -42,7 +42,6 @@ class Document(models.Model):
     original_url = models.URLField(blank=True)
     original_slug = models.CharField(max_length=200, blank=True)
 
-    shares = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
 
     @property
