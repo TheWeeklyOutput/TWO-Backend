@@ -9,6 +9,14 @@ class ContentType(models.Model):
     def __str__(self):
         return self.slug
 
+class Author(models.Model):
+    slug = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return self.slug
+
+
 class Outlet(models.Model):
     slug = models.CharField(max_length=50)
     website = models.URLField(blank=True)
@@ -25,16 +33,18 @@ class Category(models.Model):
     def __str__(self):
         return self.slug
 
-
 class Document(models.Model):
     content_type = models.ForeignKey(ContentType)
     outlet = models.ForeignKey(Outlet)
     category = models.ForeignKey(Category)
+    author = models.ForeignKey(Author, default=1)
 
-    headline = models.CharField(max_length=120)
+    title = models.CharField(max_length=120)
     content = models.TextField()
     annotations = PickledObjectField()
+    
     image_url = models.URLField(blank=True)
+    image_credit = models.CharField(max_length=200, blank=True, unique=False)
 
     generated = models.BooleanField(default=False)
     original_document = models.ForeignKey('Document', null=True)
@@ -54,7 +64,7 @@ class Document(models.Model):
         if not self.generated:
             return self.original_slug
 
-        res = self.headline.lower()
+        res = self.title.lower()
         res = re.sub('[^A-Za-z0-9\s\\-_]+', '', res).split(' ')
         return '-'.join(res)
 
@@ -64,5 +74,5 @@ class Document(models.Model):
         if self.generated:
             res += 'FAKE: ' 
         
-        res += self.headline
+        res += self.title
         return res

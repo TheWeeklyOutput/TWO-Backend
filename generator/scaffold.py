@@ -62,16 +62,16 @@ class DocumentScaffold:
         res = res.replace('[ ', '[')
         res = res.replace('( ', '(')
 
-        headline = 'No Headline :('
+        title = 'No Title :('
         arr = res.split('[]')
         if len(arr[0]) < 100:
-            headline = arr.pop(0).rstrip()
+            title = arr.pop(0).rstrip()
 
         res = ''.join(arr)
         res = res.replace(' " ', ' "')
         res = res.replace(' \' ', ' \'')
 
-        return headline, res, self.context.entities, self.sentences
+        return title, res, self.context.entities, self.sentences
 
 
     def fill_with_context(self, context): #omfg

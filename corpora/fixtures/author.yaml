@@ -1,0 +1,6 @@
+
+- model: corpora.Author
+  pk: 1
+  fields:
+    name: Default Author
+    slug: defaultauthor

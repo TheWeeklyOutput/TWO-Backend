@@ -25,10 +25,10 @@ def save_corpus(annotations=None, **kwargs):
     kwargs['content_type'], created = ContentType.objects.get_or_create(slug=kwargs['content_type'])
     kwargs['outlet'], created = Outlet.objects.get_or_create(slug=kwargs['outlet'])
     kwargs['category'], created = Category.objects.get_or_create(slug=kwargs['category'])
-    kwargs['category'].available = kwargs['category'].available or kwargs['generated']
+    kwargs['category'].available = (kwargs.get('generated', False) or kwargs['category'].available)
     kwargs['category'].save()
 
-    print('Saved Document: ' + kwargs['headline'])
+    print('Saved Document: ' + kwargs['title'])
     return Document.objects.create(annotations=annotations, **kwargs)
 
 def load_corpora(random=False, **kwargs):
