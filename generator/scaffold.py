@@ -62,15 +62,15 @@ class DocumentScaffold:
         res = res.replace('[ ', '[')
         res = res.replace('( ', '(')
 
+        res = res.replace(' " ', ' "')
+        res = res.replace(' \' ', ' \'')
+
         title = 'No Title :('
         arr = res.split('[]')
         if len(arr[0]) < 100:
             title = arr.pop(0).rstrip()
 
         res = ''.join(arr)
-        res = res.replace(' " ', ' "')
-        res = res.replace(' \' ', ' \'')
-
         return title, res, self.context.entities, self.sentences
 
 
