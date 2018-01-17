@@ -5,7 +5,8 @@ import io
 from xml.etree import ElementTree
 from queue import Queue
 from threading import Thread
-from backend.generator.corpora import save_corpus
+from django.db.utils import IntegrityError
+from backend.corpora.manager import save_corpus, corpus_exists
 
 class HTMLCrawler:
     html_parser = None
@@ -35,6 +36,10 @@ class HTMLCrawler:
 
     def crawl(self, date):
         for url in self.get_urls(date):
+            if corpus_exists(url):
+                print('Corpus Already Exists: ' + url)
+                continue
+
             response = requests.get(url)
             try:
                 self.html_parser.feed(response.text)
@@ -44,16 +49,19 @@ class HTMLCrawler:
             except:
                 print('Malformed HTML:', url)
                 return
+            try:
+                save_corpus(
+                    content=content,
+                    headline=headline,
+                    content_type=self.get_content_type(),
+                    outlet=self.get_outlet(),
+                    category=self.get_category(url),
+                    original_slug=self.get_slug(url),
+                    original_url=url
+                )
+            except IntegrityError:
+                print('Slug already exists: ' + self.get_slug(url))
 
-            save_corpus(
-                content=content,
-                headline=headline,
-                content_type=self.get_content_type(),
-                outlet=self.get_outlet(),
-                category=self.get_category(url),
-                original_slug=self.get_slug(url),
-                original_url=url
-            )
 
 
 class XMLSiteMapCrawler(HTMLCrawler):

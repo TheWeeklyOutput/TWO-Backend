@@ -36,7 +36,7 @@ class DocumentScaffold:
         for sentence in self.sentences:
             for token in sentence.words:  
                 dash = token.text_content in '— – - _'
-                abr = token.text_content in '\'s n\'t'
+                abr = token.text_content in '\'s n\'t \'re'
                 space = space and not dash and not abr
                 next_space = next_space and not dash
 
@@ -46,8 +46,8 @@ class DocumentScaffold:
                 for chars, in_char in in_chars.items():
                     if token.text_content in chars:
                         in_chars[chars] = not in_char
-                        next_space = next_space and in_char
-                        space = space and not in_char
+                        next_space = next_space or in_char
+                        space = space or not in_char
 
                 if space:
                     res += ' '
@@ -55,13 +55,17 @@ class DocumentScaffold:
                 res += token.text_content
                 space = next_space
                 next_space = True
-
+            space= False
             res += ' \n'
-  
+        
+        res = res.replace('-- ', ' -- ')
+        res = res.replace('[ ', '[')
+        res = res.replace('( ', '(')
+
         headline = 'No Headline :('
-        arr = res.split('-#-')
+        arr = res.split('[]')
         if len(arr[0]) < 100:
-            headline = arr.pop(0) + ' -'
+            headline = arr.pop(0).rstrip()
 
         res = ''.join(arr)
         res = res.replace(' " ', ' "')

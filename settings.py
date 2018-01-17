@@ -25,7 +25,9 @@ INSTALLED_APPS = [
     'webpack_loader',
     'rest_framework',
     'backend.crawlers',
-    'backend.generator'
+    'backend.generator',
+    'backend.corpora'
+
 ]
 
 SITE_ID = 1

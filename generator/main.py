@@ -1,4 +1,4 @@
-from .corpora import load_corpora, save_corpus
+from backend.corpora.manager import load_corpora, save_corpus
 from .scaffold import Context, DocumentScaffold
 from backend.knowledge.wikidata import image_search
 import random
@@ -26,7 +26,7 @@ def main(category):
         generated=False,
         content_type='news',
         outlet='cnn',
-        #category=category
+        category=category
     )
 
     chosen_doc = docs.first()

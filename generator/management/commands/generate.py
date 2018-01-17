@@ -9,4 +9,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for category in options['category']:
+            print("Generating Category: " + category)
             main(category)
