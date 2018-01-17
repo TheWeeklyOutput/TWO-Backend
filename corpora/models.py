@@ -20,7 +20,8 @@ class Outlet(models.Model):
 class Category(models.Model):
     slug = models.CharField(max_length=50)
     name = models.CharField(max_length=50, blank=True, null=True)
-    
+    available = models.BooleanField(default=False)
+
     def __str__(self):
         return self.slug
 
@@ -38,23 +39,22 @@ class Document(models.Model):
     generated = models.BooleanField(default=False)
     original_document = models.ForeignKey('Document', null=True)
     date = models.DateTimeField(auto_now_add=True)
+    slug = models.CharField(max_length=200, blank=True, unique=True)
 
     original_url = models.URLField(blank=True)
     original_slug = models.CharField(max_length=200, blank=True)
 
-    likes = models.IntegerField(default=0)
+    shares = models.IntegerField(default=0)
 
-    @property
-    def url(self):
-        return '/documents/slug/' + '/'.join([self.slug])
+    def save(self, *args, **kwargs):
+        self.slug = self.get_slug()
+        super(Document, self).save(*args, **kwargs)
 
-    @property
-    def slug(self):
+    def get_slug(self):
         if not self.generated:
             return self.original_slug
 
-        res = self.date.strftime('%Y-%m-%d_%H-%M-%S')
-        res += ' ' + self.headline.lower()
+        res = self.headline.lower()
         res = re.sub('[^A-Za-z0-9\s\\-_]+', '', res).split(' ')
         return '-'.join(res)
 

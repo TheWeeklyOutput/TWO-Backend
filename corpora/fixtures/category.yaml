@@ -1,0 +1,15 @@
+
+
+- model: corpora.Category
+  pk: 1
+  fields:
+    name: All
+    slug: all
+    available: True
+
+- model: corpora.Category
+  pk: 1
+  fields:
+    name: Highlights
+    slug: highlights
+    available: True

@@ -13,6 +13,7 @@ class BaseParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         if tag == 'html':
             self.data = []
+            self.headline = ""
             self.parseing = True
 
         useful, headline = self.check_content(tag, attrs)

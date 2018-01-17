@@ -12,7 +12,7 @@ class CNNParser(BaseParser):
         return useful, headline
 
     def get_content(self):
-        data = [' - ' + self.headline + ' -#- ']
+        data = [self.headline + ' [] ']
         data += [d for d in self.get_data() if len(d) > 1]
         return '\n'.join(data)
 
