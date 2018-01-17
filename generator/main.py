@@ -70,13 +70,13 @@ def main(category):
         chosen_scaffold.context.entities[i] = e
 
     chosen_scaffold.fill_with_context(chosen_scaffold.context)
-    headline, content, entities, sents = chosen_scaffold.to_content()
-    print(headline)
+    title, content, entities, sents = chosen_scaffold.to_content()
+    print(title)
     print(content)
 
     image_url = None
     for entity in entities:
-        image_url = image_search(entity.name)
+        image_url, image_credit = image_search(entity.name)
         if image_url is not None:
             print(image_url)
             break
@@ -86,9 +86,10 @@ def main(category):
         content_type='news',
         outlet='cnn',
         category=category,
-        headline=headline,
+        title=title,
         content=content,
         image_url=image_url,
+        image_credit=image_credit,
         original_document=chosen_doc,
         annotations=sents
     )

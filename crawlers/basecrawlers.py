@@ -44,7 +44,7 @@ class HTMLCrawler:
             try:
                 self.html_parser.feed(response.text)
                 content = self.html_parser.get_content()
-                headline = self.html_parser.headline
+                title = self.html_parser.headline
 
             except:
                 print('Malformed HTML:', url)
@@ -52,7 +52,7 @@ class HTMLCrawler:
             try:
                 save_corpus(
                     content=content,
-                    headline=headline,
+                    title=title,
                     content_type=self.get_content_type(),
                     outlet=self.get_outlet(),
                     category=self.get_category(url),

@@ -8,7 +8,7 @@
     available: True
 
 - model: corpora.Category
-  pk: 1
+  pk: 2
   fields:
     name: Highlights
     slug: highlights
