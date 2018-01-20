@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     'backend.crawlers',
     'backend.generator',
     'backend.corpora'
-
 ]
 
 SITE_ID = 1
