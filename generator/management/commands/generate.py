@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from backend.generator.main import main
+from backend.generator.test import test
 
 class Command(BaseCommand):
     help = 'Generates an article'
@@ -10,4 +11,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for category in options['category']:
             print("Generating Category: " + category)
-            main(category)
+            test(category)

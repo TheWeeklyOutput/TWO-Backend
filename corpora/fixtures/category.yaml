@@ -52,6 +52,6 @@
 - model: corpora.Category
   pk: 8
   fields:
-    name: world
-    slug: World
+    name: World
+    slug: world
     available: True
