@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from backend.generator.main import main
-from backend.generator.test import test
+from backend.generator.combinator import Combinator
 
 class Command(BaseCommand):
     help = 'Generates an article'
@@ -10,5 +9,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for category in options['category']:
-            print("Generating Category: " + category)
-            test(category)
+            combinator = Combinator(category=category)
+            combinator.generate()
+            combinator.save()

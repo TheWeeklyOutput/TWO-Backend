@@ -1,8 +1,23 @@
+import math
+import random
+from backend.knowledge.wikidata import image_search
+
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
 
 def meta(x):
     return x.__meta__()
 
 class BaseObject(object):
+    @staticmethod
+    def find_appendant(items, begin_offset, end_offset):
+        appendant_items = []
+        for item in items:
+            if item.begin >= begin_offset \
+                    and item.begin <= end_offset:
+                appendant_items.append(item)
+        return appendant_items
+
     @classmethod
     def from_language_cloud_repr(cls, *args, **kwargs):
         return NotImplemented
@@ -39,8 +54,8 @@ class Token(BaseObject):
             token.text_content,
             token.text_begin,
             doc.tokens.index(token),
-            token.text_begin,
-            token.text_begin,
+            token.edge_index,
+            token.edge_label,
             token.part_of_speech
         )
 
@@ -60,18 +75,9 @@ class Sentence(BaseObject):
         begin_offset = sentence.begin
         end_offset = begin_offset + len(sentence.content)
 
-        mentions = []
-
-        for mention in [m for e in doc.entities for m in e.mentions]:
-            if mention.begin_offset >= begin_offset \
-                    and mention.begin_offset <= end_offset:
-                mentions.append(mention)
-
-        tokens = []
-        for token in doc.tokens:
-            if token.begin >= begin_offset \
-                    and token.begin <= end_offset:
-                tokens.append(token)
+        mentions = [m for e in doc.entities for m in e.mentions]
+        mentions = cls.find_appendant(mentions, begin_offset, end_offset)
+        tokens = cls.find_appendant(doc.tokens, begin_offset, end_offset)
 
         return cls(
             sentence.content,
@@ -82,9 +88,9 @@ class Sentence(BaseObject):
         )
 
 class Mention(BaseObject):
-    def __init__(self, text, begin_offset, mention_type, tokens):
+    def __init__(self, text, begin, mention_type, tokens):
         self.text = text
-        self.begin_offset = begin_offset
+        self.begin = begin
         self.mention_type = mention_type
         self.tokens = tokens
         self.mapped = False
@@ -99,14 +105,14 @@ class Mention(BaseObject):
         self.tokens = tokens
 
     def check_compatibility(self, mention):
-        if self.mapped:
+        if self.mapped or self.text == mention.text:
             return False
         return meta(self) == meta(mention)
 
     def find_compatible(self, mentions):
-        for mention in mentions:
-            if self.check_compatibility(mention):
-                return mention
+        compatible = [m for m in mentions if self.check_compatibility(m)]
+        if len(compatible) > 0:
+            return random.choice(compatible)
         return False
 
     @classmethod
@@ -114,12 +120,7 @@ class Mention(BaseObject):
         begin_offset = mention.text.begin_offset
         end_offset = begin_offset + len(mention.text.content)
 
-        tokens = []
-        for token in doc.tokens:
-            if token.begin >= begin_offset \
-                    and token.begin <= end_offset:
-
-                tokens.append(token)
+        tokens = cls.find_appendant(doc.tokens, begin_offset, end_offset)
 
         return cls(
             mention.text.content,
@@ -144,12 +145,11 @@ class Entity(BaseObject):
             return 0
 
         salience_difference = abs(self.salience - entity.salience)
-
         if salience_difference == 0:
             if self.check_duplicity(entity):
                 return 0
             return 1
-        return 1/salience_difference
+        return sigmoid(1/salience_difference)
 
     def check_duplicity(self, entity):
         if self.entity_type != entity.entity_type:
@@ -185,12 +185,12 @@ class Document(BaseObject):
         self.sentences = sentences
         self.entities = entities
 
-    def rebuild(self):
-        for mention in [m for e in self.entities for m in e.mentions]:
-            for m_token in mention.tokens:
-                for i, token in enumerate(self.tokens):
-                    if m_token.begin == token.begin:
-                        self.tokens[i].map(m_token)
+    def image_search(self):
+        for sentence in self.sentences:
+            for mention in sentence.mentions:
+                image_url, image_credit = image_search(mention.text)
+                if image_url:
+                    return image_url, image_credit
 
     def to_content(self):
         res = ' '
@@ -241,7 +241,7 @@ class Document(BaseObject):
             title = arr.pop(0).rstrip()
 
         res = ''.join(arr)
-        return title, res
+        return title, res, self.image_search()
 
     @classmethod
     def from_language_cloud_repr(cls, doc):
