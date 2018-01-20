@@ -17,15 +17,16 @@ def search(string):
     return res['search']
 
 def image_search(string):
+    print('Image Search for: ' + string)
     results = search(string)
     if len(results) < 1:
-        return None, None
+        return False, False
 
     entity = client.get(results[0]['id'], load=True)
     image_prop = client.get('P18')
     try:
         image = entity[image_prop]
     except KeyError:
-        return None, None
+        return False, False
 
     return image.image_url, 'Wikimedia Commons'

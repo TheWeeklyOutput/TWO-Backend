@@ -77,7 +77,7 @@ def main(category):
     image_url = None
     for entity in entities:
         image_url, image_credit = image_search(entity.name)
-        if image_url is not None:
+        if image_url:
             print(image_url)
             break
 
