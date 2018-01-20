@@ -2,7 +2,7 @@ import os
 import pickle
 from google.cloud import language
 from google.gax import CallOptions
-from .models import Document, ContentType, Outlet, Category
+from .models import Document, ContentType, Outlet, Category, Author
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath("FakeNewsGen-d45b8ea85e8f.json")
 
@@ -27,7 +27,7 @@ def save_corpus(annotations=None, **kwargs):
     kwargs['category'], created = Category.objects.get_or_create(slug=kwargs['category'])
 
     print('Saved Document: ' + kwargs['title'])
-    return Document.objects.create(annotations=annotations, **kwargs)
+    return Document.objects.create(annotations=annotations, author=Author.objects.all().first(), **kwargs)
 
 def load_corpora(random=False, **kwargs):
     args = [
