@@ -26,7 +26,6 @@ def save_corpus(annotations=None, **kwargs):
     kwargs['outlet'], created = Outlet.objects.get_or_create(slug=kwargs['outlet'])
     kwargs['category'], created = Category.objects.get_or_create(slug=kwargs['category'])
 
-    print('Saved Document: ' + kwargs['title'])
     return Document.objects.create(annotations=annotations, author=Author.objects.all().first(), **kwargs)
 
 def load_corpora(random=False, **kwargs):

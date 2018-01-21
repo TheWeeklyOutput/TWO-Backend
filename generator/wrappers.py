@@ -6,6 +6,8 @@ def sigmoid(x):
     return 1 / (1 + math.exp(-x))
 
 def meta(x):
+    if x is None:
+        return None
     return x.__meta__()
 
 class BaseObject(object):
@@ -14,7 +16,7 @@ class BaseObject(object):
         appendant_items = []
         for item in items:
             if item.begin >= begin_offset \
-                    and item.begin <= end_offset:
+                    and item.begin < end_offset:
                 appendant_items.append(item)
         return appendant_items
 
@@ -25,13 +27,10 @@ class BaseObject(object):
     @classmethod
     def from_repr(cls, obj, *args, **kwargs):
         module = obj.__module__
-
         if 'backend.generator' in module:
             return obj
         if 'google.cloud.language' in module:
             return cls.from_language_cloud_repr(obj, *args, **kwargs)
-
-
 
 class Token(BaseObject):
     def __init__(self, doc, text, begin, index, edge_index, edge_label, pos):
@@ -44,8 +43,35 @@ class Token(BaseObject):
         self.pos = pos
 
     def map(self, token):
+        text = token.text
+        if self.text.istitle():
+            text = text.title()
+        if self.text.islower():
+            text = text.lower()
+
         self.text = token.text
         self.edge_label = token.edge_label
+
+    def direct_children(self):
+        return [t for t in self.doc.tokens if t.edge_index == self.index]
+
+    def find_child(self, edge_label, token=None, depth=0, max_depth=100):
+        if depth > max_depth:
+            return None
+        children = self.direct_children()
+        for token in children:
+            if token.edge_label == edge_label:
+                return token
+            child = token.find_child(edge_label, depth=depth+1)
+            if child:
+                return child
+        return None
+
+    def find_parent(self, edge_label):
+        parent = self.doc.tokens[self.edge_index]
+        if parent.edge_label == edge_label:
+            return parent
+        return parent.find_parent(edge_label)
 
     @classmethod
     def from_language_cloud_repr(cls, token, doc):
@@ -93,16 +119,33 @@ class Mention(BaseObject):
         self.begin = begin
         self.mention_type = mention_type
         self.tokens = tokens
+
+        self.root = tokens[0].find_parent('ROOT')
+        self.determiner = tokens[0].find_child('DET')
+        self.amod = tokens[0].find_child('AMOD')
+        self.advmod = tokens[0].find_child('ADVMOD')
         self.mapped = False
 
     def map(self, mention):
-        print(self.text, mention.text)
         self.text = mention.text
         tokens = []
         for token, replace_token in zip(self.tokens, mention.tokens):
             token.map(replace_token)
             tokens.append(token)
         self.tokens = tokens
+
+        relevant = [
+            (self.root, mention.root),
+            (self.determiner, mention.determiner),
+            (self.amod, mention.amod),
+            (self.advmod, mention.advmod)
+        ]
+
+        for a, b in relevant:
+            if a is not None and b is not None:
+                a.map(b)
+
+        self.mapped = True
 
     def check_compatibility(self, mention):
         if self.mapped or self.text == mention.text:
@@ -130,7 +173,14 @@ class Mention(BaseObject):
         )
 
     def __meta__(self):
-        return (self.mention_type, tuple(meta(token) for token in self.tokens))
+        return (
+            self.mention_type,
+            meta(self.root),
+            #meta(self.determiner),
+            meta(self.amod),
+            meta(self.advmod),
+            tuple(meta(token) for token in self.tokens)
+        )
 
 class Entity(BaseObject):
     def __init__(self, name, mentions, entity_type, metadata, salience):
@@ -204,9 +254,11 @@ class Document(BaseObject):
         space = True
         next_space = True
         for sentence in self.sentences:
+            sentence_str = ''
+            space = False
             for token in sentence.tokens:
                 dash = token.text in '— – - _'
-                abr = token.text in '\'s n\'t \'re'
+                abr = token.text in ['\'s', 'n\'t', '\'re', '\'m', 'na']
                 space = space and not dash and not abr
                 next_space = next_space and not dash
 
@@ -220,13 +272,13 @@ class Document(BaseObject):
                         space = space or not in_char
 
                 if space:
-                    res += ' '
+                    sentence_str += ' '
 
-                res += token.text
+                sentence_str += token.text
                 space = next_space
                 next_space = True
-            space= False
-            res += ' \n'
+            space = False
+            res += sentence_str.strip() + ' \n'
 
         res = res.replace('-- ', ' -- ')
         res = res.replace('[ ', '[')
@@ -238,7 +290,7 @@ class Document(BaseObject):
         title = 'No Title :('
         arr = res.split('[]')
         if len(arr[0]) < 100:
-            title = arr.pop(0).rstrip()
+            title = arr.pop(0).strip()
 
         res = ''.join(arr)
         return title, res, self.image_search()
