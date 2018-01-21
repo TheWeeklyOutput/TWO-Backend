@@ -13,4 +13,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         date = datetime.strptime(options['date'][0], '%Y-%m')
         for crawler in self.crawlers:
+            self.stdout.write('Crawling: {0}'.format(crawler.get_outlet()))
             crawler.crawl(date)

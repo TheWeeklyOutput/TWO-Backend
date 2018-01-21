@@ -16,7 +16,6 @@ class Author(models.Model):
     def __str__(self):
         return self.slug
 
-
 class Outlet(models.Model):
     slug = models.CharField(max_length=50)
     website = models.URLField(blank=True)
@@ -37,7 +36,7 @@ class Document(models.Model):
     content_type = models.ForeignKey(ContentType)
     outlet = models.ForeignKey(Outlet)
     category = models.ForeignKey(Category)
-    author = models.ForeignKey(Author)
+    author = models.ForeignKey(Author, default=1)
 
     title = models.CharField(max_length=120)
     content = models.TextField()

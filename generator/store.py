@@ -1,3 +1,4 @@
+from tqdm import tqdm
 from .wrappers import Entity
 
 class EntityStore:
@@ -5,12 +6,11 @@ class EntityStore:
         self.entities = []
 
     def add_docs(self, docs):
-        for doc in docs:
+        for doc in tqdm(docs, desc='Storing Entities'):
             self.add_doc(doc)
 
     def add_doc(self, doc):
         for entity in doc.entities:
-            entity = Entity.from_repr(entity, doc)
             self.add(entity)
 
     def add(self, new_entity):
@@ -28,8 +28,6 @@ class EntityStore:
             for entity in entities:
                 compatible = mention.find_compatible(entity.mentions)
                 if compatible:
-                    print(entity.similarity(compared_entity))
-                    print(compared_entity.entity_type, entity.entity_type)
                     mention.map(compatible)
                     break
             compared_entity.mentions[i] = mention

@@ -1,6 +1,7 @@
-from backend.corpora.manager import load_corpora
+from backend.corpora.manager import load_corpora, save_corpus
 from .wrappers import Document
 from .store import EntityStore
+from tqdm import tqdm
 
 class Combinator: 
     def __init__(self, **kwargs):
@@ -20,11 +21,14 @@ class Combinator:
         )
 
     def fill_store(self):
-        docs = [Document.from_repr(doc.annotations) for doc in self.docs]
+        progress = tqdm(self.docs, desc='Parsing Documents')
+        docs = [Document.from_repr(doc.annotations) for doc in progress]
         self.entity_store.add_docs(docs)
 
     def map_entities(self):
-        for i, entity in enumerate(self.base_doc.entities):
+        progress = tqdm(enumerate(self.base_doc.entities), desc='Mapping Entities')
+        for i, entity in progress:
+            progress.set_description('Mapping: {0}'.format(entity.name))
             entity = self.entity_store.map_similar(entity)
             self.base_doc.entities[i] = entity
 
@@ -39,7 +43,7 @@ class Combinator:
         print(title)
         print(content)
         print(image_url)
-        '''
+
         return save_corpus(
             generated=True,
             **self.generation_args,
@@ -47,7 +51,6 @@ class Combinator:
             content=content,
             image_url=image_url,
             image_credit=image_credit,
-            original_document=self.orginal_doc,
+            original_document=self.original_doc,
             annotations=self.base_doc
         )
-        '''

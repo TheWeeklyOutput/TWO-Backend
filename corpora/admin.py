@@ -1,8 +1,6 @@
 from django.contrib import admin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
-
 from .models import Document, Category, ContentType, Outlet
-
 
 class CategoryInline(SuperInlineModelAdmin, admin.StackedInline):
     model = Category
