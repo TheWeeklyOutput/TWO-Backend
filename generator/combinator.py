@@ -26,8 +26,8 @@ class Combinator:
         self.entity_store.add_docs(docs)
 
     def map_entities(self):
-        progress = tqdm(enumerate(self.base_doc.entities), desc='Mapping Entities')
-        for i, entity in progress:
+        progress = tqdm(self.base_doc.entities, desc='Mapping Entities')
+        for i, entity in enumerate(progress):
             progress.set_description('Mapping: {0}'.format(entity.name))
             entity = self.entity_store.map_similar(entity)
             self.base_doc.entities[i] = entity

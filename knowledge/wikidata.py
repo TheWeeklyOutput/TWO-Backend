@@ -17,7 +17,6 @@ def search(string):
     return res['search']
 
 def image_search(string):
-    print('Image Search for: ' + string)
     results = search(string)
     if len(results) < 1:
         return False, False

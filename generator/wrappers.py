@@ -1,11 +1,12 @@
 import math
 import random
+from tqdm import tqdm
 from backend.knowledge.wikidata import image_search
 
 def sigmoid(x):
     return 1 / (1 + math.exp(-x))
 
-def meta(x):
+def meta(x): 
     if x is None:
         return None
     return x.__meta__()
@@ -199,7 +200,7 @@ class Entity(BaseObject):
             if self.check_duplicity(entity):
                 return 0
             return 1
-        return sigmoid(1/salience_difference)
+        return sigmoid(1/salience_difference) + (random.random() / 5) - 0.1
 
     def check_duplicity(self, entity):
         if self.entity_type != entity.entity_type:
@@ -236,11 +237,12 @@ class Document(BaseObject):
         self.entities = entities
 
     def image_search(self):
-        for sentence in self.sentences:
-            for mention in sentence.mentions:
-                image_url, image_credit = image_search(mention.text)
-                if image_url:
-                    return image_url, image_credit
+        progress = tqdm([m for s in self.sentences for m in s.mentions], desc='')
+        for mention in progress:
+            progress.set_description('Image Search for: {0}'.format(mention.text))
+            image_url, image_credit = image_search(mention.text)
+            if image_url:
+                return image_url, image_credit
 
     def to_content(self):
         res = ' '
@@ -255,10 +257,9 @@ class Document(BaseObject):
         next_space = True
         for sentence in self.sentences:
             sentence_str = ''
-            space = False
             for token in sentence.tokens:
                 dash = token.text in '— – - _'
-                abr = token.text in ['\'s', 'n\'t', '\'re', '\'m', 'na']
+                abr = token.text in ['\'s', 'n\'t', '\'re', '\'m', 'na', '\'ve']
                 space = space and not dash and not abr
                 next_space = next_space and not dash
 
@@ -283,9 +284,10 @@ class Document(BaseObject):
         res = res.replace('-- ', ' -- ')
         res = res.replace('[ ', '[')
         res = res.replace('( ', '(')
-
         res = res.replace(' " ', ' "')
         res = res.replace(' \' ', ' \'')
+        res = res.replace('\n" ', '\n"')
+        res = res.replace('\n\' ', '\n\'')
 
         title = 'No Title :('
         arr = res.split('[]')

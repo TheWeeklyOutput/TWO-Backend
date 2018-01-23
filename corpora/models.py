@@ -33,10 +33,10 @@ class Category(models.Model):
         return self.slug
 
 class Document(models.Model):
-    content_type = models.ForeignKey(ContentType)
-    outlet = models.ForeignKey(Outlet)
-    category = models.ForeignKey(Category)
-    author = models.ForeignKey(Author, default=1)
+    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
+    outlet = models.ForeignKey(Outlet, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    author = models.ForeignKey(Author, default=1, on_delete=models.PROTECT)
 
     title = models.CharField(max_length=120)
     content = models.TextField()
