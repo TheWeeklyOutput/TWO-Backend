@@ -46,7 +46,7 @@ class Document(models.Model):
     image_credit = models.CharField(max_length=200, blank=True, unique=False)
 
     generated = models.BooleanField(default=False)
-    original_document = models.ForeignKey('Document', null=True)
+    original_document = models.ForeignKey('Document', null=True, on_delete=models.PROTECT)
     date = models.DateTimeField(auto_now_add=True)
     slug = models.CharField(max_length=200, blank=True, unique=True)
 
