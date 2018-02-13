@@ -8,7 +8,6 @@ def image_search(keyword):
         'search_engines': 'google',
         'search_type': 'image',
         'scrapemethod': 'selenium'
-
     }
 
     try:
