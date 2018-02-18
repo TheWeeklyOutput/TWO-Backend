@@ -1,0 +1,6 @@
+
+- model: corpora.ContentType
+  pk: 1
+  fields:
+    name: News
+    slug: news
