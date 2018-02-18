@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from .manager import load_corpora
-from .serializers import DocumentSerializer, CategorySerializer
+from .serializers import DocumentSerializer, DocumentListSerializer, CategorySerializer
 from .models import Category
 
 class GetByCategory(APIView):
@@ -19,7 +19,7 @@ class GetByCategory(APIView):
         paginator = Paginator(articles, 5)
 
         try:
-            items = DocumentSerializer(paginator.page(page).object_list, many=True).data
+            items = DocumentListSerializer(paginator.page(page).object_list, many=True).data
         except EmptyPage:
             return Response([], status=status.HTTP_204_NO_CONTENT)
         return Response(items, status=status.HTTP_200_OK)

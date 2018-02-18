@@ -55,6 +55,10 @@ class Document(models.Model):
 
     shares = models.IntegerField(default=0)
 
+    @property
+    def description(self):
+        return self.content[:200]
+
     def save(self, *args, **kwargs):
         self.slug = self.get_slug()
         super(Document, self).save(*args, **kwargs)

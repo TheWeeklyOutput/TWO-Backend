@@ -7,11 +7,17 @@ class AuthorSerializer(serializers.ModelSerializer):
         model = Author
         fields = ('name', 'slug')
 
+class DocumentListSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer()
+    class Meta:
+        model = Document
+        fields = ('title', 'description', 'image_url', 'date', 'shares', 'author', 'slug')
+
 class DocumentSerializer(serializers.ModelSerializer):
     author = AuthorSerializer()
     class Meta:
         model = Document
-        fields = ('title', 'content', 'image_url', 'image_credit', 'date', 'shares', 'author')
+        fields = ('title', 'content', 'image_url', 'image_credit', 'date', 'shares', 'author', 'original_url')
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
