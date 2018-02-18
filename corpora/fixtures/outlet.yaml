@@ -1,0 +1,7 @@
+
+- model: corpora.Outlet
+  pk: 1
+  fields:
+    name: CNN
+    slug: cnn
+    website: http://www.cnn.com/
