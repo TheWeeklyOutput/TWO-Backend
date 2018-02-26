@@ -1,4 +1,5 @@
-from backend.corpora.manager import load_corpora, save_corpus
+from django.core.exceptions import EmptyResultSet
+from backend.corpora.manager import load_corpora, save_article
 from .wrappers import Document
 from .store import EntityStore
 from tqdm import tqdm
@@ -14,11 +15,14 @@ class Combinator:
         self.fill_store()
 
     def load_documents(self, **kwargs):
-        return load_corpora(
+        docs = load_corpora(
             random=True,
-            generated=False,
             **kwargs
         )
+
+        if len(docs) < 1:
+            raise EmptyResultSet('No Documents for Category')
+        return docs
 
     def fill_store(self):
         progress = tqdm(self.docs, desc='Parsing Documents')
@@ -36,21 +40,21 @@ class Combinator:
         self.map_entities()
 
     def save(self):
-        title, content, image_data = self.base_doc.to_content()
+        title, paragraphs, image_data = self.base_doc.to_content()
         image_url, image_credit = image_data
 
         print('Original: ' + self.original_doc.title)
         print(title)
-        print(content)
+        print(paragraphs)
         print(image_url)
 
-        return save_corpus(
-            generated=True,
-            **self.generation_args,
+        return save_article(
+            content_type=self.original_doc.content_type,
+            outlet=self.original_doc.outlet,
+            category=self.original_doc.category,
             title=title,
-            content=content,
+            paragraphs=paragraphs,
             image_url=image_url,
             image_credit=image_credit,
             original_document=self.original_doc,
-            annotations=self.base_doc
         )

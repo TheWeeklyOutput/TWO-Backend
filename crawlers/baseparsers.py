@@ -26,11 +26,9 @@ class BaseParser(HTMLParser):
         if tag == 'html':
             self.parseing = False
 
-
     def handle_data(self, data):
         if self.content_headline:
-            self.headline = data
-
+            self.headline += data
         if self.content_useful:
             self.data.append(data)
 

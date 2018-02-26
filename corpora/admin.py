@@ -1,6 +1,6 @@
 from django.contrib import admin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
-from .models import Document, Category, ContentType, Outlet
+from .models import Document, Category, ContentType, Outlet, Article
 
 class CategoryInline(SuperInlineModelAdmin, admin.StackedInline):
     model = Category
@@ -61,6 +61,16 @@ class DocumentAdmin(SuperModelAdmin):
         self.inlines = []
         return super(DocumentAdmin, self).change_view(*args, **kwargs)
 
+class ArticleAdmin(SuperModelAdmin):
+    def add_view(self, *args, **kwargs):
+        self.inlines = []
+        return super(ArticleAdmin, self).add_view(*args, **kwargs)
+
+    def change_view(self, *args, **kwargs):
+        self.inlines = []
+        return super(ArticleAdmin, self).change_view(*args, **kwargs)
+
+admin.site.register(Article, ArticleAdmin)
 admin.site.register(Document, DocumentAdmin)
 admin.site.register(Outlet, OutletAdmin)
 admin.site.register(Category, CategoryAdmin)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Document, Category, Author
+from .models import Article, Category, Author, Paragraph
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -7,17 +7,24 @@ class AuthorSerializer(serializers.ModelSerializer):
         model = Author
         fields = ('name', 'slug')
 
-class DocumentListSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer()
+class ParagraphSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Document
-        fields = ('title', 'description', 'image_url', 'date', 'shares', 'author', 'slug')
+        model = Paragraph
+        fields = ('content', 'index')
 
-class DocumentSerializer(serializers.ModelSerializer):
+class ArticleListSerializer(serializers.ModelSerializer):
     author = AuthorSerializer()
     class Meta:
-        model = Document
-        fields = ('title', 'content', 'image_url', 'image_credit', 'date', 'shares', 'author', 'original_url')
+        model = Article
+        fields = ('title', 'description', 'image_url', 'date', 'views', 'author', 'slug')
+
+class ArticleSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer()
+    paragraphs = ParagraphSerializer(many=True)
+
+    class Meta:
+        model = Article
+        fields = ('title', 'paragraphs', 'image_url', 'image_credit', 'date', 'views', 'author', 'slug')
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

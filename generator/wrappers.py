@@ -243,6 +243,7 @@ class Document(BaseObject):
             image_url, image_credit = image_search(mention.text)
             if image_url:
                 return image_url, image_credit
+        return None, None
 
     def to_content(self):
         res = ' '
@@ -291,11 +292,10 @@ class Document(BaseObject):
 
         title = 'No Title :('
         arr = res.split('[]')
-        if len(arr[0]) < 100:
+        if len(arr[0]) < 150:
             title = arr.pop(0).strip()
 
-        res = ''.join(arr)
-        return title, res, self.image_search()
+        return title, arr, self.image_search()
 
     @classmethod
     def from_language_cloud_repr(cls, doc):

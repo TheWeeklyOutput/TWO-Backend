@@ -8,7 +8,7 @@ from queue import Queue
 from threading import Thread
 from time import sleep
 from django.db.utils import IntegrityError
-from backend.corpora.manager import save_corpus, corpus_exists
+from backend.corpora.manager import save_corpus, corpus_exists, category_active
 
 class HTMLCrawler:
     html_parser = None
@@ -64,8 +64,8 @@ class HTMLCrawler:
                 content_type=self.get_content_type(),
                 outlet=self.get_outlet(),
                 category=self.get_category(url),
-                original_slug=self.get_slug(url),
-                original_url=url
+                slug=self.get_slug(url),
+                url=url
             )
         except Exception as e:
             self.tqdm.set_postfix(error='{0}'.format(e))
@@ -80,9 +80,12 @@ class HTMLCrawler:
                 self.tqdm.set_postfix(error='Corpus Already Exists')
                 continue
 
+            if not category_active(self.get_category(url)):
+                self.tqdm.set_postfix(error='Category Not Active')
+                continue
+
             response = self.request(url)
             title, content = self.parse_html(response.text, url)
-
             if title and content:
                 self.save(title, content, url)
 

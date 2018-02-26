@@ -5,16 +5,33 @@ class CNNParser(BaseParser):
     def check_content(self, tag, attrs):
         useful = False
         headline = False
+        if tag == 'p':
+            useful = True
+
         for attr_type, value in attrs:
+            if value != 'speakable':
+                useful = False
+
             if value:
                 headline = headline or value.startswith('pg-headline')
+                headline = headline or value.startswith('article-title')
+
                 useful = useful or value.startswith('zn-body__paragraph')
         return useful, headline
 
     def get_content(self):
-        data = [self.headline + ' [] ']
-        data += [d for d in self.get_data() if len(d) > 1]
-        return ' '.join(data)
+        data = [self.headline]
+        res = ''
+        for d in self.get_data():
+            if len(d) <= 1:
+                continue
+
+            res += d
+            if res.strip().endswith(('.', ']')):
+                data.append(res)
+                res = ''
+
+        return ' [] '.join(data)
 
 class CNNCrawler(XMLSiteMapCrawler):
     html_parser = CNNParser()

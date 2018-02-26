@@ -5,6 +5,7 @@
     name: All
     slug: all
     available: True
+    generateable: False
 
 - model: corpora.Category
   pk: 2
@@ -12,6 +13,7 @@
     name: Highlights
     slug: highlights
     available: True
+    generateable: False
 
 - model: corpora.Category
   pk: 3
@@ -19,6 +21,7 @@
     name: Politics
     slug: politics
     available: True
+    generateable: True
 
 - model: corpora.Category
   pk: 4
@@ -26,27 +29,31 @@
     name: Health
     slug: health
     available: True
-  
+    generateable: True
+
 - model: corpora.Category
   pk: 5
   fields:
     name: Entertainment
     slug: entertainment
     available: True
+    generateable: True
 
 - model: corpora.Category
   pk: 6
   fields:
     name: Sports
-    slug: sports
+    slug: sport
     available: True
+    generateable: True
 
 - model: corpora.Category
   pk: 7
   fields:
     name: Technology
-    slug: tech
+    slug: technology
     available: True
+    generateable: True
 
 - model: corpora.Category
   pk: 8
@@ -54,3 +61,4 @@
     name: World
     slug: world
     available: True
+    generateable: True

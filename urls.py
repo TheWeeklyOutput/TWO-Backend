@@ -11,3 +11,6 @@ urlpatterns = [
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns.append(url(r'^__debug__/', include(debug_toolbar.urls)))
+
+    from django.contrib.staticfiles.views import serve
+    urlpatterns.append(url(r'^$', serve, kwargs={'path': 'index.html', 'document_root': settings.STATIC_ROOT}))
