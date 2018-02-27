@@ -260,7 +260,7 @@ class Document(BaseObject):
             sentence_str = ''
             for token in sentence.tokens:
                 dash = token.text in '— – - _'
-                abr = token.text in ['\'s', 'n\'t', '\'re', '\'m', 'na', '\'ve']
+                abr = token.text in ['\'s', 'n\'t', '\'re', '\'m', 'na', '\'ve', '\'d']
                 space = space and not dash and not abr
                 next_space = next_space and not dash
 
