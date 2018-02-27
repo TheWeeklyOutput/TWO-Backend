@@ -1,7 +1,0 @@
-.DS_Store
-
-*.log
-log.txt
-
-dist/*
-!dist/.keep
