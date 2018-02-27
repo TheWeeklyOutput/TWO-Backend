@@ -62,3 +62,11 @@
     slug: world
     available: True
     generateable: True
+
+- model: corpora.Category
+  pk: 9
+  fields:
+    name: Fake Category
+    slug: fake
+    available: False
+    generateable: False

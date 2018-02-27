@@ -4,3 +4,9 @@
   fields:
     name: News
     slug: news
+
+- model: corpora.ContentType
+  pk: 2
+  fields:
+    name: Fake Content Type
+    slug: fake

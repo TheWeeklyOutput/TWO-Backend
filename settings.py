@@ -119,7 +119,7 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'backend/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'backend/storage')
 
 WEBPACK_LOADER = {
     'DEFAULT': {
