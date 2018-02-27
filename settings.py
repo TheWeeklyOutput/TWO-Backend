@@ -9,7 +9,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'VERY_SECRET_KEY_THAT_YOU_SHOUL
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'two.meks.io']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'www.weekly-output.com', 'weekly-output.com']
 
 # Application definition
 
