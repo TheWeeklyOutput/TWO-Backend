@@ -2,9 +2,9 @@
 - model: corpora.Document
   pk: 1
   fields:
-    content_type: 1
-    outlet: 1
-    category: 1
+    content_type: 2
+    outlet: 2
+    category: 9
     author: 1
     title: Fake Document
     content: This fake Document contains nothing.

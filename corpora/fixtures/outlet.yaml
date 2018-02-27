@@ -5,3 +5,10 @@
     name: CNN
     slug: cnn
     website: http://www.cnn.com/
+
+- model: corpora.Outlet
+  pk: 2
+  fields:
+    name: Fake Outlet
+    slug: fake
+    website: http://fake.news/
