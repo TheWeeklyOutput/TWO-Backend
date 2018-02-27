@@ -1,0 +1,13 @@
+
+- model: corpora.Document
+  pk: 1
+  fields:
+    content_type: 1
+    outlet: 1
+    category: 1
+    author: 1
+    title: Fake Document
+    content: This fake Document contains nothing.
+    slug: fake-doc
+    url: https://fake.news
+    date: 2000-04-20T16:20:00+00:00

@@ -10,6 +10,7 @@ ALLOWED_HOSTS.append('127.0.0.1:4000')
 
 INSTALLED_APPS.append('debug_toolbar')
 
+
 # cross origin
 INSTALLED_APPS.append('corsheaders')
 MIDDLEWARE += ['corsheaders.middleware.CorsMiddleware',
