@@ -27,6 +27,9 @@ class BaseParser(HTMLParser):
             self.parseing = False
 
     def handle_data(self, data):
+        self.content_useful = self.content_useful and not data.strip().startswith('Chat with us in Facebook Messenger')
+        self.content_useful = self.content_useful and not data.strip().startswith('Most stock quote data provided by BATS.')
+
         if self.content_headline:
             self.headline += data
         if self.content_useful:

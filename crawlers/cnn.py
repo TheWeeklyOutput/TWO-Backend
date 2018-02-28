@@ -17,6 +17,7 @@ class CNNParser(BaseParser):
                 headline = headline or value.startswith('article-title')
 
                 useful = useful or value.startswith('zn-body__paragraph')
+                useful = useful and not value.endswith('zn-body__footer')
         return useful, headline
 
     def get_content(self):
