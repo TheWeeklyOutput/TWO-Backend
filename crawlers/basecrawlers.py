@@ -88,6 +88,8 @@ class HTMLCrawler:
             title, content = self.parse_html(response.text, url)
             if title and content:
                 self.save(title, content, url)
+            else: 
+                self.tqdm.set_postfix(error='No Content')
 
 class XMLSiteMapCrawler(HTMLCrawler):
     def get_sitemaps(self):
