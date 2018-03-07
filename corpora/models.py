@@ -37,6 +37,9 @@ class Paragraph(models.Model):
     content = models.TextField()
     index = models.IntegerField()
 
+    def __str__(self):
+        return '{0}: {1}'.format(self.index, self.content)
+
 class Article(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     outlet = models.ForeignKey(Outlet, on_delete=models.PROTECT)
