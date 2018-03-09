@@ -33,6 +33,42 @@ class BaseObject(object):
         if 'google.cloud.language' in module:
             return cls.from_language_cloud_repr(obj, *args, **kwargs)
 
+class PartOfSpeech(BaseObject):
+    def __init__(self, tag, aspect, case, form, gender, mood, number,
+                person, proper, reciprocity, tense, voice):
+        self.tag = tag
+        self.aspect = aspect
+        self.case = case
+        self.form = form
+        self.gender = gender
+        self.mood = mood
+        self.number = number
+        self.person = person
+        self.proper = proper
+        self.reciprocity = reciprocity
+        self.tense = tense
+        self.voice = voice
+
+    @classmethod
+    def from_language_cloud_repr(cls, pos):
+        return cls(
+            pos.tag,
+            pos.aspect,
+            pos.case,
+            pos.form,
+            pos.gender,
+            pos.mood,
+            pos.number,
+            pos.person,
+            pos.proper,
+            pos.reciprocity,
+            pos.tense,
+            pos.voice,
+        )
+    
+    def __meta__(self):
+        return tuple(self.__dict__.values())
+
 class Token(BaseObject):
     def __init__(self, doc, text, begin, index, edge_index, edge_label, pos):
         self.doc = doc
@@ -72,22 +108,24 @@ class Token(BaseObject):
         parent = self.doc.tokens[self.edge_index]
         if parent.edge_label == edge_label:
             return parent
-        return parent.find_parent(edge_label)
+        if self.edge_index != parent.edge_index:
+            return parent.find_parent(edge_label)
 
     @classmethod
     def from_language_cloud_repr(cls, token, doc):
+        pos = PartOfSpeech.from_repr(token.part_of_speech)
         return cls(
             doc,
-            token.text_content,
-            token.text_begin,
+            token.text.content,
+            token.text.begin_offset,
             doc.tokens.index(token),
-            token.edge_index,
-            token.edge_label,
-            token.part_of_speech
+            token.dependency_edge.head_token_index,
+            token.dependency_edge.label,
+            pos
         )
 
     def __meta__(self):
-        return (self.edge_label, tuple(self.pos.__dict__.values()))
+        return (self.edge_label, meta(self.pos))
 
 class Sentence(BaseObject):
     def __init__(self, text, tokens, begin, sentiment, mentions):
@@ -98,18 +136,18 @@ class Sentence(BaseObject):
         self.mentions = mentions
 
     @classmethod
-    def from_language_cloud_repr(cls, sentence, doc):
-        begin_offset = sentence.begin
-        end_offset = begin_offset + len(sentence.content)
+    def from_language_cloud_repr(cls, sentence, entities, tokens):
+        begin_offset = sentence.text.begin_offset
+        end_offset = begin_offset + len(sentence.text.content)
 
-        mentions = [m for e in doc.entities for m in e.mentions]
+        mentions = [m for e in entities for m in e.mentions]
         mentions = cls.find_appendant(mentions, begin_offset, end_offset)
-        tokens = cls.find_appendant(doc.tokens, begin_offset, end_offset)
+        stokens = cls.find_appendant(tokens, begin_offset, end_offset)
 
         return cls(
-            sentence.content,
-            tokens,
-            sentence.begin,
+            sentence.text.content,
+            stokens,
+            begin_offset,
             sentence.sentiment.score,
             mentions
         )
@@ -160,17 +198,16 @@ class Mention(BaseObject):
         return False
 
     @classmethod
-    def from_language_cloud_repr(cls, mention, doc):
+    def from_language_cloud_repr(cls, mention, tokens):
         begin_offset = mention.text.begin_offset
         end_offset = begin_offset + len(mention.text.content)
 
-        tokens = cls.find_appendant(doc.tokens, begin_offset, end_offset)
-
+        mtokens = cls.find_appendant(tokens, begin_offset, end_offset)
         return cls(
             mention.text.content,
             mention.text.begin_offset,
-            mention.mention_type,
-            tokens
+            mention.type,
+            mtokens
         )
 
     def __meta__(self):
@@ -216,16 +253,16 @@ class Entity(BaseObject):
         self.salience = (self.salience + entity.salience) / 2
 
     @classmethod
-    def from_language_cloud_repr(cls, entity, doc):
+    def from_language_cloud_repr(cls, entity, tokens):
         mentions = []
         for mention in entity.mentions:
-            mention = Mention.from_repr(mention, doc)
+            mention = Mention.from_repr(mention, tokens)
             mentions.append(mention)
 
         return cls(
             entity.name,
             mentions,
-            entity.entity_type,
+            entity.type,
             entity.metadata,
             entity.salience
         )
@@ -280,6 +317,10 @@ class Document(BaseObject):
                 space = next_space
                 next_space = True
             space = False
+            print(sentence_str)
+            print('\n')
+            print('\n')
+
             res += sentence_str.strip() + ' \n'
 
         res = res.replace('-- ', ' -- ')
@@ -291,6 +332,8 @@ class Document(BaseObject):
         res = res.replace('\n\' ', '\n\'')
 
         title = 'No Title :('
+        print(res)
+        print('\n')
         arr = res.split('[]')
         if len(arr[0]) < 150:
             title = arr.pop(0).strip()
@@ -298,21 +341,22 @@ class Document(BaseObject):
         return title, arr, self.image_search()
 
     @classmethod
-    def from_language_cloud_repr(cls, doc):
-        for i, token in enumerate(doc.tokens):
+    def from_language_cloud_repr(cls, cloud_doc):
+        doc = cls(
+            list(cloud_doc.tokens),
+            list(cloud_doc.sentences),
+            list(cloud_doc.entities)
+        )
+        
+        for i, token in enumerate(cloud_doc.tokens):
             token = Token.from_repr(token, doc)
             doc.tokens[i] = token
 
-        for i, entity in enumerate(doc.entities):
-            entity = Entity.from_repr(entity, doc)
+        for i, entity in enumerate(cloud_doc.entities):
+            entity = Entity.from_repr(entity, doc.tokens)
             doc.entities[i] = entity
 
-        for i, sentence in enumerate(doc.sentences):
-            sentence = Sentence.from_repr(sentence, doc)
+        for i, sentence in enumerate(cloud_doc.sentences):
+            sentence = Sentence.from_repr(sentence, doc.entities, doc.tokens)
             doc.sentences[i] = sentence
-
-        return cls(
-            doc.tokens,
-            doc.sentences,
-            doc.entities
-        )
+        return doc

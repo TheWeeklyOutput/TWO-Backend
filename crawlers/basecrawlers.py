@@ -89,7 +89,7 @@ class HTMLCrawler:
             if title and content:
                 self.save(title, content, url)
             else: 
-                self.tqdm.set_postfix(error='No Content')
+                self.tqdm.set_postfix(error='Category Not Active')
 
 class XMLSiteMapCrawler(HTMLCrawler):
     def get_sitemaps(self):

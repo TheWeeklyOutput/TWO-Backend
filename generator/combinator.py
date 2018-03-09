@@ -9,8 +9,11 @@ class Combinator:
         self.generation_args = kwargs
         self.docs = self.load_documents(**kwargs)
         self.original_doc = self.docs.first()
+        print('Generating new Document from: ' + self.original_doc.title)
 
         self.base_doc = Document.from_repr(self.original_doc.annotations)
+        print(self.base_doc.sentences)
+
         self.entity_store = EntityStore()
         self.fill_store()
 
@@ -28,6 +31,7 @@ class Combinator:
         progress = tqdm(self.docs, desc='Parsing Documents')
         docs = [Document.from_repr(doc.annotations) for doc in progress]
         self.entity_store.add_docs(docs)
+        print(self.base_doc.sentences)
 
     def map_entities(self):
         progress = tqdm(self.base_doc.entities, desc='Mapping Entities')
@@ -38,6 +42,7 @@ class Combinator:
 
     def generate(self):
         self.map_entities()
+        print(self.base_doc.sentences)
 
     def save(self):
         title, paragraphs, image_data = self.base_doc.to_content()

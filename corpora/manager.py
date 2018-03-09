@@ -2,21 +2,31 @@ import os
 import pickle
 from django.core.exceptions import ObjectDoesNotExist
 from google.cloud import language
-from google.gax import CallOptions
 from .models import Document, ContentType, Outlet, Category, Author, Article, Paragraph
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath("FakeNewsGen-d45b8ea85e8f.json")
+features = {
+    "extract_syntax": True,
+    "extract_entities": True,
+    "extract_document_sentiment": True,
+}
 
 def analyse_corpus(text, max_failures=5):        
     if max_failures < 1: return
 
-    client = language.client.Client()
-    document = client.document_from_text(content=text, language='en')
+    client = language.LanguageServiceClient()
+    
+    document = language.types.Document(
+        content=text.encode('utf-8'),
+        type=language.enums.Document.Type.PLAIN_TEXT,
+        language='en'
+    )
 
     try:
-        return document.annotate_text()
+        doc = client.annotate_text(document, features, encoding_type=language.enums.EncodingType.UTF8)
+        return doc
     except:
-        print('Retrying... Max Failures: ' + max_failures-1)
+        print('Retrying... Max Failures: ' + str(max_failures-1))
         return analyse_corpus(text, max_failures=max_failures-1)
 
 def save_corpus(annotations=None, **kwargs):
