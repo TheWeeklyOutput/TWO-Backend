@@ -12,6 +12,7 @@ class Command(BaseCommand):
         parser.add_argument('--outlet', nargs=1, type=str, default=['cnn'])
         parser.add_argument('--content-type', nargs=1, type=str, default=['news'])
         parser.add_argument('--active-categories', nargs=1, type=bool, default=[False])
+        parser.add_argument('--fake-link', nargs=1, type=bool, default=[False])
         parser.add_argument('--amount', nargs=1, type=int, default=[1])
 
     def handle(self, *args, **options):
@@ -20,26 +21,25 @@ class Command(BaseCommand):
         if options['active_categories'][0]:
             categories = [c.slug for c in get_active_categories().filter(generateable=True)]
             for category in categories:
-                self.generate(options['amount'][0], category=category)
+                self.generate(options['amount'][0], fake_link=options['fake_link'][0], category=category)
 
         for category, outlet, content_type in zip(options['category'], options['outlet'], options['content_type']):
-            self.generate(options['amount'][0], category=category, outlet=outlet, content_type=content_type)
+            self.generate(options['amount'][0], fake_link=options['fake_link'][0], category=category, outlet=outlet, content_type=content_type)
+
 
     def generate(self, amount, **kwargs):
+        combinator = Combinator(**kwargs)
+
         for i in range(0, amount):
             msg = ''
             for k, v in kwargs.items():
                 msg += '{}: {} '.format(k, v)
             self.stdout.write(msg)
 
-            try:
-                combinator = Combinator(**kwargs)
-            except EmptyResultSet:
-                return False
             combinator.generate()
 
             try:
-                combinator.save()
+                combinator.finalize()
             except IntegrityError:
                 self.stdout.write('Generated Document Not Unique. Retrying ...')
                 self.generate(amount-i, **kwargs)

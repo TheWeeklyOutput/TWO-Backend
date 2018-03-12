@@ -1,0 +1,13 @@
+
+- model: corpora.Corpus
+  pk: 1
+  fields:
+    content_type: 1
+    outlet: 1
+    category: 1
+    author: 1
+    slug: fake-corpus
+    title: Fake Corpus
+    xml: xml/default.xml
+    date: 2000-11-11T16:20:00+00:00
+    url: https://fake.news

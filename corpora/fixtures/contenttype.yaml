@@ -1,12 +1,14 @@
 
+
 - model: corpora.ContentType
   pk: 1
   fields:
-    name: News
-    slug: news
+    name: Fake Content Type
+    slug: fake
 
 - model: corpora.ContentType
   pk: 2
   fields:
-    name: Fake Content Type
-    slug: fake
+    name: News
+    slug: news
+

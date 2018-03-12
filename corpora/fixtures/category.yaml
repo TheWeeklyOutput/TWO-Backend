@@ -1,6 +1,13 @@
-
 - model: corpora.Category
   pk: 1
+  fields:
+    name: Fake Category
+    slug: fake
+    available: False
+    generateable: False
+
+- model: corpora.Category
+  pk: 2
   fields:
     name: All
     slug: all
@@ -8,7 +15,7 @@
     generateable: False
 
 - model: corpora.Category
-  pk: 2
+  pk: 3
   fields:
     name: Highlights
     slug: highlights
@@ -16,57 +23,55 @@
     generateable: False
 
 - model: corpora.Category
-  pk: 3
+  pk: 4
   fields:
     name: Politics
     slug: politics
-    available: True
-    generateable: True
-
-- model: corpora.Category
-  pk: 4
-  fields:
-    name: Health
-    slug: health
+    aliases: uspolitics
     available: True
     generateable: True
 
 - model: corpora.Category
   pk: 5
   fields:
-    name: Entertainment
-    slug: entertainment
+    name: Health
+    slug: health
+    aliases: med medicine
     available: True
     generateable: True
 
 - model: corpora.Category
   pk: 6
   fields:
-    name: Sports
-    slug: sport
+    name: Entertainment
+    slug: entertainment
+    aliases: hollywood movies tv
     available: True
     generateable: True
 
 - model: corpora.Category
   pk: 7
   fields:
-    name: Technology
-    slug: technology
+    name: Sports
+    slug: sport
+    aliases: sports golf
     available: True
     generateable: True
 
 - model: corpora.Category
   pk: 8
   fields:
-    name: World
-    slug: world
+    name: Technology
+    slug: technology
+    aliases: tech
     available: True
     generateable: True
 
 - model: corpora.Category
   pk: 9
   fields:
-    name: Fake Category
-    slug: fake
-    available: False
-    generateable: False
+    name: World
+    slug: world
+    aliases: worldpolitics
+    available: True
+    generateable: True

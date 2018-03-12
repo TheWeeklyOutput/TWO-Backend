@@ -1,19 +1,23 @@
+import random
+from copy import copy
+from django.utils import timezone
 from django.core.exceptions import EmptyResultSet
-from backend.corpora.manager import load_corpora, save_article
-from .wrappers import Document
+from backend.corpora.manager import load_corpora, save_generated_document, fake_corpus
+from backend.knowledge.finder import Finder
+from google.cloud import language
+from .detokenizer import Detokenizer
+from .document import Document
 from .store import EntityStore
 from tqdm import tqdm
 
 class Combinator: 
-    def __init__(self, **kwargs):
+    def __init__(self, fake_link=False, **kwargs):
         self.generation_args = kwargs
         self.docs = self.load_documents(**kwargs)
-        self.original_doc = self.docs.first()
-        print('Generating new Document from: ' + self.original_doc.title)
+        self.fake_link = fake_link
 
-        self.base_doc = Document.from_repr(self.original_doc.annotations)
-        print(self.base_doc.sentences)
-
+        self.finder = Finder()
+        self.detokenizer = Detokenizer()
         self.entity_store = EntityStore()
         self.fill_store()
 
@@ -29,9 +33,8 @@ class Combinator:
 
     def fill_store(self):
         progress = tqdm(self.docs, desc='Parsing Documents')
-        docs = [Document.from_repr(doc.annotations) for doc in progress]
+        docs = [Document.from_repr(doc.xml) for doc in progress]
         self.entity_store.add_docs(docs)
-        print(self.base_doc.sentences)
 
     def map_entities(self):
         progress = tqdm(self.base_doc.entities, desc='Mapping Entities')
@@ -41,25 +44,58 @@ class Combinator:
             self.base_doc.entities[i] = entity
 
     def generate(self):
+        docs_list = list(self.docs)
+        random.shuffle(docs_list)
+
+        self.original_corpus = docs_list[0]
+        print('Generating new Document from: ' + self.original_corpus.title)
+        self.base_doc = Document.from_repr(self.original_corpus.xml)
         self.map_entities()
-        print(self.base_doc.sentences)
 
-    def save(self):
-        title, paragraphs, image_data = self.base_doc.to_content()
+    def report(self, original, generated):
+        print(
+            '\n'
+            '-------------------------------------------------- \n'
+            ' Original Title: {0} \n'
+            'Generated Title: {1} \n\n'
+            ' Original Description: \n{2} \n'
+            'Generated Description: \n{3} \n\n'
+            'Content: \n'
+            '{4} \n\n'
+            'Image: {5} \n'
+            '-------------------------------------------------- \n'
+            .format(original.title, generated.title, original.description,
+                    generated.description, generated.html_content, generated.image_url)
+        )
+    
+    def save(self, original, title, description, content, image_data):
         image_url, image_credit = image_data
-
-        print('Original: ' + self.original_doc.title)
-        print(title)
-        print(paragraphs)
-        print(image_url)
-
-        return save_article(
-            content_type=self.original_doc.content_type,
-            outlet=self.original_doc.outlet,
-            category=self.original_doc.category,
+        return save_generated_document(
+            'Annotation saving disabled',
+            html_content=content,
             title=title,
-            paragraphs=paragraphs,
+            description=description,
+            date=timezone.now(),
+            content_type=original.content_type,
+            outlet=original.outlet,
+            category=original.category,
             image_url=image_url,
             image_credit=image_credit,
-            original_document=self.original_doc,
+            original_corpus=original,
         )
+
+    def finalize(self):
+        self.detokenizer.detokenize_document(self.base_doc)
+        title, description, content_soup = self.detokenizer.get_data()
+        content_soup = self.finder.populate_anchors(content_soup)
+        image_data = self.finder.get_document_image(self.base_doc)
+ 
+        document = self.save(
+            fake_corpus() if self.fake_link else self.original_corpus,
+            title,
+            description,
+            content_soup.prettify().strip(),
+            image_data
+        )
+        self.report(self.original_corpus, document)
+        return document

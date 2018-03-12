@@ -1,5 +1,5 @@
 from tqdm import tqdm
-from .wrappers import Entity
+from .entity import Entity
 
 class EntityStore:
     def __init__(self):
@@ -32,4 +32,3 @@ class EntityStore:
                     break
             compared_entity.mentions[i] = mention
         return compared_entity
-

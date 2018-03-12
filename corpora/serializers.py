@@ -1,32 +1,31 @@
 from rest_framework import serializers
-from .models import Article, Category, Author, Paragraph
-
-
-class AuthorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Author
-        fields = ('name', 'slug')
-
-class ParagraphSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Paragraph
-        fields = ('content', 'index')
-
-class ArticleListSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer()
-    class Meta:
-        model = Article
-        fields = ('title', 'description', 'image_url', 'date', 'views', 'author', 'slug')
-
-class ArticleSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer()
-    paragraphs = ParagraphSerializer(many=True)
-
-    class Meta:
-        model = Article
-        fields = ('title', 'paragraphs', 'image_url', 'image_credit', 'date', 'views', 'author', 'slug')
+from .models import Category, Author, Outlet, GeneratedDocument
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('name', 'slug')
+
+class OutletSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Outlet
+        fields = ('name', 'slug', 'website')
+
+class AuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Author
+        fields = ('name', 'slug', 'outlets')
+
+class GeneratedDocumentListSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer()
+    class Meta:
+        model = GeneratedDocument
+        fields = ('title', 'slug', 'description', 'image_url', 'date', 'views', 'author')
+
+class GeneratedDocumentSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer()
+
+    class Meta:
+        model = GeneratedDocument
+        fields = ('title', 'slug', 'html_content', 'image_url', 'image_credit', 'date', 'views', 'author')
+    

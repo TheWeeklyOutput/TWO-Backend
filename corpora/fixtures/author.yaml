@@ -2,5 +2,31 @@
 - model: corpora.Author
   pk: 1
   fields:
-    name: Default Author
-    slug: defaultauthor
+    name: Fake Author
+    slug: fake-author
+    outlets: [1]
+    generated: False
+
+- model: corpora.Author
+  pk: 2
+  fields:
+    name: Excellent Writer
+    slug: excellent-writer
+    outlets: [2]
+    generated: True
+
+- model: corpora.Author
+  pk: 3
+  fields:
+    name: Your Mom
+    slug: your-mom
+    outlets: [2]
+    generated: True
+
+- model: corpora.Author
+  pk: 4
+  fields:
+    name: Carlos Matos
+    slug: carlos-matos
+    outlets: [2]
+    generated: True

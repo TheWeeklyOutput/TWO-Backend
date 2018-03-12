@@ -1,28 +1,32 @@
 from django.contrib import admin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
-from .models import Document, Category, ContentType, Outlet, Article
-
-class CategoryInline(SuperInlineModelAdmin, admin.StackedInline):
-    model = Category
-    max_num = 0
-    fields = ('name', 'slug')
+from .models import GeneratedDocument, Corpus, Category, ContentType, Outlet, Author
 
 class OutletInline(SuperInlineModelAdmin, admin.StackedInline):
     model = Outlet
     max_num = 0
     fields = ('name', 'slug', 'website')
 
+class AuthorInline(SuperInlineModelAdmin, admin.StackedInline):
+    model = Author
+    max_num = 0
+    fields = ('name', 'slug', 'generated', 'outlets')
+    inlines = (OutletInline, )
+
+class CategoryInline(SuperInlineModelAdmin, admin.StackedInline):
+    model = Category
+    max_num = 0
+    fields = ('name', 'slug', 'aliases', 'available', 'generateable')
 
 class ContentTypeInline(SuperInlineModelAdmin, admin.StackedInline):
     model = ContentType
     max_num = 0
     fields = ('name', 'slug')
 
-class DocumentInline(SuperInlineModelAdmin, admin.StackedInline):
-    model = Document
+class CorpusInline(SuperInlineModelAdmin, admin.StackedInline):
+    model = Corpus
     max_num = 0
     fields = ('headline', 'slug', 'content')
-    #inlines = (SentenceInline, TokenInline)
 
 class ContentTypeAdmin(SuperModelAdmin):
     def add_view(self, *args, **kwargs):
@@ -42,6 +46,15 @@ class OutletAdmin(SuperModelAdmin):
         self.inlines = []
         return super(OutletAdmin, self).change_view(*args, **kwargs)
 
+class AuthorAdmin(SuperModelAdmin):
+    def add_view(self, *args, **kwargs):
+        self.inlines = []
+        return super(AuthorAdmin, self).add_view(*args, **kwargs)
+
+    def change_view(self, *args, **kwargs):
+        self.inlines = []
+        return super(AuthorAdmin, self).change_view(*args, **kwargs)
+
 class CategoryAdmin(SuperModelAdmin):
     def add_view(self, *args, **kwargs):
         self.inlines = []
@@ -51,27 +64,27 @@ class CategoryAdmin(SuperModelAdmin):
         self.inlines = []
         return super(CategoryAdmin, self).change_view(*args, **kwargs)
 
-
-class DocumentAdmin(SuperModelAdmin):
+class CorpusAdmin(SuperModelAdmin):
     def add_view(self, *args, **kwargs):
         self.inlines = []
-        return super(DocumentAdmin, self).add_view(*args, **kwargs)
+        return super(CorpusAdmin, self).add_view(*args, **kwargs)
 
     def change_view(self, *args, **kwargs):
         self.inlines = []
-        return super(DocumentAdmin, self).change_view(*args, **kwargs)
+        return super(CorpusAdmin, self).change_view(*args, **kwargs)
 
-class ArticleAdmin(SuperModelAdmin):
+class GeneratedDocumentAdmin(SuperModelAdmin):
     def add_view(self, *args, **kwargs):
         self.inlines = []
-        return super(ArticleAdmin, self).add_view(*args, **kwargs)
+        return super(GeneratedDocumentAdmin, self).add_view(*args, **kwargs)
 
     def change_view(self, *args, **kwargs):
         self.inlines = []
-        return super(ArticleAdmin, self).change_view(*args, **kwargs)
+        return super(GeneratedDocumentAdmin, self).change_view(*args, **kwargs)
 
-admin.site.register(Article, ArticleAdmin)
-admin.site.register(Document, DocumentAdmin)
+admin.site.register(GeneratedDocument, GeneratedDocumentAdmin)
+admin.site.register(Corpus, CorpusAdmin)
 admin.site.register(Outlet, OutletAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(ContentType, ContentTypeAdmin)
+admin.site.register(Author, AuthorAdmin)

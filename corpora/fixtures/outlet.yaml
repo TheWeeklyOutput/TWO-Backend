@@ -2,13 +2,28 @@
 - model: corpora.Outlet
   pk: 1
   fields:
-    name: CNN
-    slug: cnn
-    website: http://www.cnn.com/
+    name: Fake Outlet
+    slug: fake
+    website: http://fake.news/
 
 - model: corpora.Outlet
   pk: 2
   fields:
-    name: Fake Outlet
-    slug: fake
-    website: http://fake.news/
+    name: The Weekly Output
+    slug: two
+    website: http://www.weekly-output.com/
+
+- model: corpora.Outlet
+  pk: 3
+  fields:
+    name: Edition CNN
+    slug: edition-cnn
+    website: http://edition.cnn.com/
+  
+- model: corpora.Outlet
+  pk: 4
+  fields:
+    name: CNN Money
+    slug: cnn-money
+    website: http://money.cnn.com/
+  
