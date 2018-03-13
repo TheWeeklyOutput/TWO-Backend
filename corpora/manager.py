@@ -94,7 +94,6 @@ def get_models_for_slug(**kwargs):
         ('outlet', Outlet),
         ('category', Category),
     ]
-
     for arg, c in args:
         try:
             kwargs[arg] = c.objects.get(slug=kwargs[arg])

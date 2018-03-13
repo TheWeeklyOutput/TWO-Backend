@@ -14,15 +14,15 @@ class Token(BaseObject):
         self.pos = pos
 
     def map(self, token):
+        if self.text in ['t', 'd', 'p']:
+            return
         text = token.text
-        if self.text.istitle():
+        if self.text.istitle() and not text.isupper():
             text = text.title()
-        if self.text.islower():
+        if self.text.islower() and not text.isupper():
             text = text.lower()
-        if self.text.isupper():
-            text = text.upper()
 
-        self.text = token.text
+        self.text = text
         self.edge_label = token.edge_label
 
     def direct_children(self):

@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--category', nargs=1, type=str, default=['politics'])
-        parser.add_argument('--outlet', nargs=1, type=str, default=['cnn'])
+        parser.add_argument('--outlet', nargs=1, type=str, default=['edition-cnn', 'cnn-money'])
         parser.add_argument('--content-type', nargs=1, type=str, default=['news'])
         parser.add_argument('--active-categories', nargs=1, type=bool, default=[False])
         parser.add_argument('--fake-link', nargs=1, type=bool, default=[False])
@@ -29,17 +29,25 @@ class Command(BaseCommand):
 
     def generate(self, amount, **kwargs):
         combinator = Combinator(**kwargs)
+        msg = ''
+        for k, v in kwargs.items():
+            msg += '{}: {} '.format(k, v)
+        self.stdout.write(msg)
 
         for i in range(0, amount):
-            msg = ''
-            for k, v in kwargs.items():
-                msg += '{}: {} '.format(k, v)
-            self.stdout.write(msg)
+            self.combinate(combinator)
 
-            combinator.generate()
+    def combinate(self, combinator):
+        combinator.generate()
 
-            try:
-                combinator.finalize()
-            except IntegrityError:
-                self.stdout.write('Generated Document Not Unique. Retrying ...')
-                self.generate(amount-i, **kwargs)
+        try:
+            combinator.finalize()
+        except IntegrityError:
+            self.stdout.write('Generated Document Not Unique. Retrying ...')
+            self.combinate(combinator)
+        except AttributeError:
+            self.stdout.write('Malformed Document. Retrying ...')
+            self.combinate(combinator)
+        except Exception as e:
+            self.stdout.write('Error: {} Retrying ...'.format(e))
+            self.combinate(combinator)

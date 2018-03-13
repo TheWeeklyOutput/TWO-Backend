@@ -17,6 +17,7 @@ class GetByCategory(APIView):
             articles = load_generated_documents(category=category).order_by('date')
 
         paginator = Paginator(articles, 5)
+        print(articles[:5])
 
         try:
             items = GeneratedDocumentListSerializer(paginator.page(page).object_list, many=True).data

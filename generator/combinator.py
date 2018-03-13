@@ -26,7 +26,6 @@ class Combinator:
             random=True,
             **kwargs
         )
-
         if len(docs) < 1:
             raise EmptyResultSet('No Documents for Category')
         return docs
@@ -81,17 +80,18 @@ class Combinator:
             category=original.category,
             image_url=image_url,
             image_credit=image_credit,
-            original_corpus=original,
+            original_corpus=fake_corpus() if self.fake_link else original,
         )
 
     def finalize(self):
         self.detokenizer.detokenize_document(self.base_doc)
         title, description, content_soup = self.detokenizer.get_data()
+ 
         content_soup = self.finder.populate_anchors(content_soup)
         image_data = self.finder.get_document_image(self.base_doc)
  
         document = self.save(
-            fake_corpus() if self.fake_link else self.original_corpus,
+            self.original_corpus,
             title,
             description,
             content_soup.prettify().strip(),

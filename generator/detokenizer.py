@@ -14,7 +14,7 @@ class Detokenizer:
         ('st', 'strong'),
     ]
     REPLACE_CHARS = [
-        (re.compile(r'[A-z0-9]+(\s+-\s+)[A-z0-9]+'), '-')
+        (re.compile(r'(\s+-\s+)'), '-')
     ]
     PUNCTUATION_CHARS = [
         '.', ',', ':', ';', '!', '?',
@@ -50,7 +50,7 @@ class Detokenizer:
     def merge_tags(self, start=0):
         min = None
         max = None
-        for i in range(start, len(self.result)-1):
+        for i in range(start, len(self.result)):
             t = self.result[i]
             if type(t) != type(str()):
                 t = t.text.strip()
@@ -58,7 +58,7 @@ class Detokenizer:
                     max = i
                 elif t == '<':
                     min = i
-                    start = i
+                    start = i-1
                 if min is not None and max is not None:
                     self.merge_to_text(min, max)
                     break
@@ -72,12 +72,12 @@ class Detokenizer:
                  or t.text in self.PUNCTUATION_CHARS
 
     def merge_punctuation(self, start=0):
-        for i in range(start, len(self.result)-1):
+        for i in range(start, len(self.result)):
             t = self.result[i]
             if type(t) != type(str()):
                 if self.check_token_puncuation(t):
                     self.merge_to_text(i-1, i)
-                    start = i
+                    start = i-1
                     break
         else:
             return
@@ -85,8 +85,11 @@ class Detokenizer:
 
     def merge_encasing_characters(self, start=0):
         current_stop = False
-        for i in range(start, len(self.result)-1):
-            t = self.result[i]
+        for i in range(start, len(self.result)):
+            try:
+                t = self.result[i]
+            except IndexError:
+                return
             if type(t) != type(str()):
                 if current_stop:
                     if t.text == current_stop:
@@ -96,7 +99,8 @@ class Detokenizer:
                     if t.text == start_char and i+1<len(self.result):
                         self.merge_to_text(i, i+1)
                         current_stop = stop_char
-                        start = i
+                        start = i-1
+                        print(start, len(self.result))
         else:
             return
         self.merge_encasing_characters(start=start)
@@ -109,9 +113,9 @@ class Detokenizer:
 
     def replace(self):
         for pattern, after in self.REPLACE_CHARS:
-            print(result)
+            print(self.result)
             self.result = pattern.sub(after, self.result)
-            print(result)
+            print(self.result)
 
     def handle_tag_aliases(self, soup):
         for tag in soup.find_all(True):
@@ -131,21 +135,15 @@ class Detokenizer:
         return soup.t.string.strip()
 
     def get_description(self, soup):
-        try:
-            return soup.d.string.strip()
-        except AttributeError:
-            return None
+        return soup.d.string.strip()
+      
 
     def get_data(self):
         while not self.finalized:
             pass
         soup = BeautifulSoup(self.result, 'lxml')
 
-        try:
-            content_soup = self.get_content_soup(soup)
-            title = self.get_title(soup)
-            description = self.get_description(soup)
-            return title, description, content_soup
-        except:
-            print(soup.prettify())
-    
+        content_soup = self.get_content_soup(soup)
+        title = self.get_title(soup)
+        description = self.get_description(soup)
+        return title, description, content_soup

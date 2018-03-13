@@ -94,7 +94,7 @@ def xml_upload_path(instance, filename):
      
 class Document(AutomaticSlugModel):
     title = models.CharField(max_length=200)
-    description = models.CharField(max_length=200)
+    description = models.CharField(max_length=500)
     date = models.DateTimeField()
     xml = models.FileField(upload_to=xml_upload_path)
 
