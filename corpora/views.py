@@ -1,4 +1,6 @@
 from django.core.paginator import Paginator, EmptyPage
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -11,14 +13,13 @@ class GetByCategory(APIView):
         if category == "all":
             articles = load_generated_documents().order_by('date')
         elif category == "highlights":
-            articles = load_generated_documents().order_by('date').values_list('pk', flat=True)[:25]
-            articles = load_generated_documents(pk__in=list(articles)).order_by('views') 
+            hightlight_date = timezone.now() - relativedelta(weeks=2)
+            articles = load_generated_documents().filter(date__gte=hightlight_date).values_list('pk', flat=True)
+            articles = load_generated_documents(pk__in=list(articles)).order_by('-views') 
         else:
             articles = load_generated_documents(category=category).order_by('date')
 
         paginator = Paginator(articles, 5)
-        print(articles[:5])
-
         try:
             items = GeneratedDocumentListSerializer(paginator.page(page).object_list, many=True).data
         except EmptyPage:
