@@ -20,7 +20,6 @@ class Detokenizer:
         '.', ',', ':', ';', '!', '?',
         '\'s', 'n\'t', '\'re', '\'m', 'na', '\'ve', '\'d', '\'ll'
     ]
-    PARTICLE_WORDS = ['to', 'out']
 
     def detokenize_document(self, document):
         self.reset(document)
@@ -67,9 +66,7 @@ class Detokenizer:
         self.merge_tags(start=start)
 
     def check_token_puncuation(self, t):
-        return (t.pos.tag == enums.PartOfSpeech.Tag.PRT \
-                and t.lemma not in self.PARTICLE_WORDS) \
-                 or t.text in self.PUNCTUATION_CHARS
+        return t.text in self.PUNCTUATION_CHARS
 
     def merge_punctuation(self, start=0):
         for i in range(start, len(self.result)):

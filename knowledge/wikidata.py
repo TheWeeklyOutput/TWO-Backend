@@ -17,7 +17,7 @@ def search(string):
     }
 
     res = requests.get('https://www.wikidata.org/w/api.php?', params=params)
-    res = json.loads(res.content)
+    res = json.loads(res.content.decode('utf-8'))
     return res['search']
 
 def search_for_props(string, props):
