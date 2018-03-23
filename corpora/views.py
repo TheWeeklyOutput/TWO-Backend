@@ -11,13 +11,13 @@ from .models import Category
 class GetByCategory(APIView):
     def get(self, request, *args, category=None, page=1, **kwargs):
         if category == "all":
-            articles = load_generated_documents().order_by('date')
+            articles = load_generated_documents().order_by('-date')
         elif category == "highlights":
             hightlight_date = timezone.now() - relativedelta(weeks=2)
             articles = load_generated_documents().filter(date__gte=hightlight_date).values_list('pk', flat=True)
             articles = load_generated_documents(pk__in=list(articles)).order_by('-views') 
         else:
-            articles = load_generated_documents(category=category).order_by('date')
+            articles = load_generated_documents(category=category).order_by('-date')
 
         paginator = Paginator(articles, 5)
         try:
