@@ -12,13 +12,16 @@ class Detokenizer:
     ]
     TAG_ALIASES = [
         ('st', 'strong'),
+        ('sp', 'span'),
     ]
     REPLACE_CHARS = [
         (re.compile(r'(\s+-\s+)'), '-')
     ]
-    PUNCTUATION_CHARS = [
+    CONCAT_CHARS = [
         '.', ',', ':', ';', '!', '?',
-        '\'s', 'n\'t', '\'re', '\'m', 'na', '\'ve', '\'d', '\'ll'
+
+        '\'s', 'n\'t', '\'re', '\'m',
+        'na', '\'ve', '\'d', '\'ll', '\'t'
     ]
 
     def detokenize_document(self, document):
@@ -66,7 +69,7 @@ class Detokenizer:
         self.merge_tags(start=start)
 
     def check_token_puncuation(self, t):
-        return t.text in self.PUNCTUATION_CHARS
+        return t.text in self.CONCAT_CHARS
 
     def merge_punctuation(self, start=0):
         for i in range(start, len(self.result)):
@@ -133,7 +136,6 @@ class Detokenizer:
 
     def get_description(self, soup):
         return soup.d.string.strip()
-      
 
     def get_data(self):
         while not self.finalized:
