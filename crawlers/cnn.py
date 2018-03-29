@@ -14,7 +14,8 @@ class CNNCrawler(XMLSiteMapCrawler):
 class CNNMoneyCrawler(CNNCrawler):
     INVALID_CONTENT_PATTERNS = [
         (re.compile(r'Visit\s(.*\..[^\/]{1,5}.[^\s]*).*'), lambda x: x.get_text()),
-        (re.compile(r'RELATED:.*'), lambda x: x.get_text())
+        (re.compile(r'RELATED:.*'), lambda x: x.get_text()),
+        (re.compile(r'READ:.*'), lambda x: x.get_text())
     ]
 
     def get_outlet(self):
