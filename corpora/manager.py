@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from google.cloud import language
 from .models import Corpus, GeneratedDocument, ContentType, Outlet, Category, Author
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath("FakeNewsGen-d45b8ea85e8f.json")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath("keys/GoogleCloudAPIKey.json")
 features = {
     "extract_syntax": True,
     "extract_entities": True,
