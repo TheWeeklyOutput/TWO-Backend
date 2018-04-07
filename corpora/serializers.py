@@ -27,5 +27,5 @@ class GeneratedDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GeneratedDocument
-        fields = ('title', 'slug', 'html_content', 'image_url', 'image_credit', 'date', 'views', 'author')
+        fields = ('title', 'slug', 'html_content', 'image_url', 'image_credit', 'date', 'views', 'author', 'description')
     
