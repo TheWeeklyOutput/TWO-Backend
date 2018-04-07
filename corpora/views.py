@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator, EmptyPage
 from django.utils import timezone
+from django.shortcuts import render
 from dateutil.relativedelta import relativedelta
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -33,6 +34,15 @@ class GetBySlug(APIView):
             return Response("Document Not Found", status=status.HTTP_404_NOT_FOUND)
         article.increment_views()
         return Response(GeneratedDocumentSerializer(article).data, status=status.HTTP_200_OK)
+
+class GetMetadataBySlug(APIView):
+    template = 'corpora/article_metadata.html'
+
+    def get(self, request, *args, slug=None, **kwargs):
+        article = load_generated_documents(slug=slug).first()
+        if article is None:
+            return Response("Document Not Found", status=status.HTTP_404_NOT_FOUND)
+        return render(request, self.template, {"article": article})
 
 class GetCategories(APIView):
     def get(self, request, *args, **kwargs):
