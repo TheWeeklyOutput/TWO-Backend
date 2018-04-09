@@ -1,6 +1,3 @@
-<!-- Update your html tag to include the itemscope and itemtype attributes. -->
-
-
 <!DOCTYPE html>
 <html itemscope itemtype="http://schema.org/Article">
     <head>
@@ -11,7 +8,7 @@
         <meta itemprop="description" content="{{ article.description }}">
         <meta itemprop="image" content="{{ article.image_url }}">
 
-        <meta name="twitter:card" content="{{ article.image_credit }}">
+        <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="@theweeklyoutput">
         <meta name="twitter:title" content="{{ article.title }}">
         <meta name="twitter:description" content="{{ article.description|truncatechars:200 }}">
@@ -32,6 +29,7 @@
         <meta property="fb:admins" content="517738711959934" />
     </head>
     <body>
+      {{ article.html_content }}
     </body>
 </html>
 
