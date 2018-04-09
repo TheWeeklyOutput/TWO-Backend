@@ -30,3 +30,52 @@
     slug: carlos-matos
     outlets: [2]
     generated: True
+
+- model: corpora.Author
+  pk: 5
+  fields:
+    name: Niki Lauda
+    slug: niki-lauda
+    outlets: [2]
+    generated: True
+
+- model: corpora.Author
+  pk: 6
+  fields:
+    name: KC Steichel
+    slug: kc-steichel
+    outlets: [2]
+    generated: True
+
+- model: corpora.Author
+  pk: 7
+  fields:
+    name: Anton (aus Tirol)
+    slug: anton-aus-tirol
+    outlets: [2]
+    generated: True
+
+- model: corpora.Author
+  pk: 8
+  fields:
+    name: Lord Buckethead
+    slug: lord-buckethead
+    outlets: [2]
+    generated: True
+
+- model: corpora.Author
+  pk: 9
+  fields:
+    name: Jeff
+    slug: jeff
+    outlets: [2]
+    generated: True
+
+- model: corpora.Author
+  pk: 10
+  fields:
+    name: John Rosenthal
+    slug: john-rosenthal
+    outlets: [2]
+    generated: True
+
