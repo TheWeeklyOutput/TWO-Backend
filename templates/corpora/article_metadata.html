@@ -18,7 +18,6 @@
         <meta property="og:title" content="{{ article.title }}" />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://www.weekly-output.com/articles/{{ article.category.slug }}/{{ article.slug }}/" />
-        <meta http-equiv="refresh" content="1;url=https://www.weekly-output.com/articles/{{ article.category.slug }}/{{ article.slug }}/">
         <meta property="og:image" content="{{ article.image_url }}" />
         <meta property="og:description" content="{{ article.description }}" />
         <meta property="og:site_name" content="The Weekly Output | News for the careful reader" />
@@ -27,6 +26,9 @@
         <meta property="article:section" content="{{ article.content_type.name }}" />
         <meta property="article:tag" content="{{ article.category.name }}" />
         <meta property="fb:admins" content="517738711959934" />
+
+        <meta http-equiv="refresh" content="1;url=https://www.weekly-output.com/articles/{{ article.category.slug }}/{{ article.slug }}/">
+
     </head>
     <body>
       {{ article.html_content|safe }}
