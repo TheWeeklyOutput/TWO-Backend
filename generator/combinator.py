@@ -10,7 +10,7 @@ from .document import Document
 from .store import EntityStore
 from tqdm import tqdm
 
-class Combinator: 
+class Combinator:
     def __init__(self, fake_link=False, **kwargs):
         self.generation_args = kwargs
         self.docs = self.load_documents(**kwargs)
@@ -32,7 +32,15 @@ class Combinator:
 
     def fill_store(self):
         progress = tqdm(self.docs, desc='Parsing Documents')
-        docs = [Document.from_repr(doc.xml) for doc in progress]
+        docs = []
+        for doc in progress:
+          doc = Document.from_repr(doc.xml)
+          if doc is None:
+            progress.set_postfix(error='Corpus XML Missing')
+            continue
+
+          docs.append(doc)
+
         self.entity_store.add_docs(docs)
 
     def map_entities(self):
@@ -66,7 +74,7 @@ class Combinator:
             .format(original.title, generated.title, original.description,
                     generated.description, generated.html_content, generated.image_url)
         )
-    
+
     def save(self, original, title, description, content, image_data):
         image_url, image_credit = image_data
         return save_generated_document(
@@ -86,10 +94,10 @@ class Combinator:
     def finalize(self):
         self.detokenizer.detokenize_document(self.base_doc)
         title, description, content_soup = self.detokenizer.get_data()
- 
+
         content_soup = self.finder.populate_anchors(content_soup)
         image_data = self.finder.get_document_image(self.base_doc)
- 
+
         document = self.save(
             self.original_corpus,
             title,

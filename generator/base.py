@@ -19,13 +19,16 @@ class BaseObject(object):
 
     @classmethod
     def from_xml(cls, file):
-        file.open()
+        try:
+          file.open()
+        except FileNotFoundError:
+          return None
         soup = BeautifulSoup(file.read(), 'lxml')
         pickle_string = soup.document.annotations.get_text()
         annotations = pickle.loads(base64.b64decode(re.findall(r'\sb\'(.+?)\'\s', pickle_string)[0]))
         file.close()
         return cls.from_repr(annotations)
-    
+
     @classmethod
     def from_repr(cls, obj, *args, **kwargs):
         module = obj.__module__

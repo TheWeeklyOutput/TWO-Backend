@@ -15,23 +15,23 @@ features = {
     "extract_document_sentiment": True,
 }
 
-def analyse_corpus(text, max_failures=5):        
+def analyse_corpus(text, max_failures=5):
     if max_failures < 1: return
 
     client = language.LanguageServiceClient()
-    
+
     document = language.types.Document(
         content=text.encode('utf-8'),
         type=language.enums.Document.Type.PLAIN_TEXT,
         language='en'
     )
 
-    try:
-        doc = client.annotate_text(document, features, encoding_type=language.enums.EncodingType.UTF8)
-        return doc
-    except:
-        print('Retrying... Max Failures: ' + str(max_failures-1))
-        return analyse_corpus(text, max_failures=max_failures-1)
+    #try:
+    doc = client.annotate_text(document, features, encoding_type=language.enums.EncodingType.UTF8)
+    return doc
+    #except :
+        #print('Retrying... Max Failures: ' + str(max_failures-1))
+        #return analyse_corpus(text, max_failures=max_failures-1)
 
 def format_corpus_content(content, title=None, description=None):
     soup = BeautifulSoup('', 'lxml')
@@ -61,7 +61,7 @@ def generate_document_xml(annotations, content=None, title=None, author=None, da
 
     if author is not None:
         soup.document.author.string = str(author)
-    
+
     if date is not None:
         soup.document.date.string = date.isoformat()
 
