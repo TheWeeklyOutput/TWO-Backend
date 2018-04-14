@@ -14,10 +14,10 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^corpora/', include('backend.corpora.urls')),
 
-    url(r'sitemap.xml',
+    url(r'sitemaps/sitemap.xml',
          cache_page(86400)(sitemap_views.index),
          {'sitemaps': sitemaps, 'sitemap_url_name': 'sitemaps'}),
-    url(r'sitemap-(?P<section>.[^\/]*).xml',
+    url(r'sitemaps/sitemap-(?P<section>.[^\/]*).xml',
          cache_page(86400)(sitemap_views.sitemap),
          {'sitemaps': sitemaps}, name='sitemaps'),
 ]

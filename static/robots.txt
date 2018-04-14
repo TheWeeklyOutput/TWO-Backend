@@ -1,8 +1,8 @@
 User-agent: *
 
 Host: www.weekly-output.com
-Sitemap: https://www.weekly-output.com/sitemap.xml
-Sitemap: https://www.weekly-output.com/sitemap-articles.xml
+Sitemap: https://www.weekly-output.com/sitemaps/sitemap.xml
+Sitemap: https://www.weekly-output.com/sitemaps/sitemap-articles.xml
 
 Allow: /articles/*
 Allow: /corpora/*
