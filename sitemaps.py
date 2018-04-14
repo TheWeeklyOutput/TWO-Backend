@@ -14,4 +14,4 @@ class GeneratedDocumentSitemap(sitemaps.Sitemap):
         return item.date
 
     def location(self, item):
-        return reverse('document_slug', kwargs={'slug': item.slug})
+        return '/articles/{0}/{1}'.format(item.category.slug, item.slug)
