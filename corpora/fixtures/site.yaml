@@ -1,0 +1,6 @@
+
+- model: sites.Site
+  pk: 100
+  fields:
+    domain: www.weekly-output.com
+    name: The Weekly Output

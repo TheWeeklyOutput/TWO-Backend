@@ -8,7 +8,7 @@ class AutomaticSlugModel(models.Model):
     def save(self, *args, **kwargs):
         self.slug = self.get_slug()
         super(AutomaticSlugModel, self).save(*args, **kwargs)
-  
+
     def display_name(self):
         raise NotImplementedError('Must be overridden by master class')
 
@@ -91,7 +91,7 @@ def xml_upload_path(instance, filename):
         instance.date.strftime('%y-%m'),
         instance.slug
     )
-     
+
 class Document(AutomaticSlugModel):
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500)

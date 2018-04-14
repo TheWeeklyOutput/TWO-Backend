@@ -26,7 +26,6 @@ class Command(BaseCommand):
         for category, outlet, content_type in zip(options['category'], options['outlet'], options['content_type']):
             self.generate(options['amount'][0], fake_link=options['fake_link'][0], category=category, outlet=outlet, content_type=content_type)
 
-
     def generate(self, amount, **kwargs):
         combinator = Combinator(**kwargs)
         msg = ''

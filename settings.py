@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.sites',
+    'django.contrib.sitemaps',
     'webpack_loader',
     'rest_framework',
     'backend.crawlers',
@@ -29,7 +30,7 @@ INSTALLED_APPS = [
     'backend.corpora'
 ]
 
-SITE_ID = 1
+SITE_ID = 100
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
