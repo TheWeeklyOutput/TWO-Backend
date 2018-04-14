@@ -34,6 +34,7 @@ class Combinator:
         progress = tqdm(self.docs, desc='Parsing Documents')
         docs = []
         for doc in progress:
+          progress.set_postfix(error='')
           doc = Document.from_repr(doc.xml)
           if doc is None:
             progress.set_postfix(error='Corpus XML Missing')
