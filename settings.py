@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'backend.crawlers',
     'backend.generator',
-    'backend.corpora'
+    'backend.corpora',
+    'backend.pdf'
 ]
 
 SITE_ID = 100
@@ -43,6 +44,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'backend.urls'
+
+PDF_TEMPLATES_HTML = os.path.join(BASE_DIR, 'backend/templates/pdf')
 
 TEMPLATES = [
     {

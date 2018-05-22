@@ -33,7 +33,7 @@ class Detokenizer:
         self.merge_rest()
         self.replace()
         self.finalize()
-    
+
     def reset(self, document):
         self.finalized = False
         self.document = document
@@ -121,12 +121,15 @@ class Detokenizer:
         for tag in soup.find_all(True):
             for alias, name in self.TAG_ALIASES:
                 if tag.name == alias:
-                    tag.name = name 
+                    tag.name = name
                     break
+
+    def get_text_content(self, content_soup):
+        return content_soup.get_text()
 
     def get_content_soup(self, soup):
         self.handle_tag_aliases(soup)
-        content = soup.new_tag('article')       
+        content = soup.new_tag('article')
         for p in soup.body.find_all('p', recursive=False):
             content.append(p)
         return content
@@ -143,6 +146,7 @@ class Detokenizer:
         soup = BeautifulSoup(self.result, 'lxml')
 
         content_soup = self.get_content_soup(soup)
+        text_content = self.get_text_content(content_soup)
         title = self.get_title(soup)
         description = self.get_description(soup)
-        return title, description, content_soup
+        return title, description, content_soup, text_content

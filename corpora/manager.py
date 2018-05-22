@@ -82,11 +82,11 @@ def save_corpus(annotations=None, content=None, **kwargs):
 def random_author():
     return Author.objects.filter(generated=True).order_by('?').first()
 
-def save_generated_document(annotations, author=None, html_content=None, **kwargs):
+def save_generated_document(annotations, author=None, html_content=None, text_content=None, **kwargs):
     if author is None:
         author = random_author()
     xml = generate_document_xml(annotations, author=author, content=html_content, **kwargs)
-    return GeneratedDocument.objects.create(xml=xml, author=author, html_content=html_content, **kwargs)
+    return GeneratedDocument.objects.create(xml=xml, author=author, html_content=html_content, text_content=text_content, **kwargs)
 
 def get_models_for_slug(**kwargs):
     args = [
@@ -96,6 +96,8 @@ def get_models_for_slug(**kwargs):
     ]
     for arg, c in args:
         try:
+            if kwargs[arg] is None:
+              kwargs.pop(arg)
             kwargs[arg] = c.objects.get(slug=kwargs[arg])
         except KeyError:
             pass

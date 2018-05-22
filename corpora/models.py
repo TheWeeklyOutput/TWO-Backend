@@ -1,6 +1,5 @@
 import re
 from django.db import models
-from picklefield.fields import PickledObjectField
 
 class AutomaticSlugModel(models.Model):
     slug = models.CharField(max_length=200)
@@ -122,16 +121,45 @@ class Corpus(Document):
         verbose_name_plural = 'Corpora'
 
 class GeneratedDocument(Document):
+    sentences = None
     content_type = models.ForeignKey(ContentType, related_name='contenttype_generated', on_delete=models.PROTECT)
     outlet = models.ForeignKey(Outlet, related_name='outlet_generated', on_delete=models.PROTECT)
     category = models.ForeignKey(Category, related_name='category_generated', on_delete=models.PROTECT)
     author = models.ForeignKey(Author, related_name='author_generated')
 
     html_content = models.TextField()
+    text_content = models.TextField(default="")
     image_url = models.URLField(blank=True)
     image_credit = models.CharField(max_length=200, blank=True, unique=False)
     original_corpus = models.ForeignKey('Corpus', null=True, on_delete=models.PROTECT)
     views = models.IntegerField(default=0)
+
+    def get_next(self, amount):
+        if self.sentences is None:
+          self.sentences = self.text_content.split(".")
+
+        res = []
+        for sentence in self.sentences:
+          if (len(".".join(res)) + len(sentence)) <= amount:
+            res.append(sentence)
+        print(".".join(res))
+        return ".".join(res)
+
+    @property
+    def chars_100(self):
+        return self.get_next(100)
+
+    @property
+    def chars_200(self):
+        return self.get_next(200)
+
+    @property
+    def chars_500(self):
+        return self.get_next(500)
+
+    @property
+    def chars_1000(self):
+        return self.get_next(100)
 
     def save(self, *args, **kwargs):
         super(GeneratedDocument, self).save(*args, **kwargs)

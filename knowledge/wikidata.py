@@ -40,7 +40,7 @@ def image_search(string):
     result = search_for_props(string, (image_prop,))
     if result:
         result = result.image_url
-    return result, 'Wikimedia Commons'
+    return result, 'Wikimedia Commons, linked by Wikidata'
 
 def url_search(string):
     result = search_for_props(string, (described_at_url_prop, official_website_prop, sitelinks))

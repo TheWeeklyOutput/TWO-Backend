@@ -13,6 +13,13 @@ class GetByCategory(APIView):
     def get(self, request, *args, category=None, page=1, **kwargs):
         if category == "all":
             articles = load_generated_documents().order_by('-date')
+        elif category == "latest":
+            categories = Category.objects.filter(generateable=True)
+            articles = zip(*(load_generated_documents(category=c).order_by('-date') \
+                              for c in categories))
+            print(articles)
+            articles = [a for t in articles for a in t]
+
         elif category == "highlights":
             highlight_date = timezone.now() - relativedelta(weeks=2)
             articles = load_generated_documents().filter(date__gte=highlight_date).values_list('pk', flat=True)
@@ -20,7 +27,7 @@ class GetByCategory(APIView):
         else:
             articles = load_generated_documents(category=category).order_by('-date')
 
-        paginator = Paginator(articles, 5)
+        paginator = Paginator(articles, 10)
         try:
             items = GeneratedDocumentListSerializer(paginator.page(page).object_list, many=True).data
         except EmptyPage:

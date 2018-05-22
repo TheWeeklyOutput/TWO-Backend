@@ -75,3 +75,12 @@
     aliases: worldpolitics
     available: True
     generateable: True
+
+- model: corpora.Category
+  pk: 10
+  fields:
+    name: latest
+    slug: latest
+    aliases: latest
+    available: True
+    generateable: False

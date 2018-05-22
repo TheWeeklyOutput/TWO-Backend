@@ -76,11 +76,12 @@ class Combinator:
                     generated.description, generated.html_content, generated.image_url)
         )
 
-    def save(self, original, title, description, content, image_data):
+    def save(self, original, title, description, content, text, image_data):
         image_url, image_credit = image_data
         return save_generated_document(
             'Annotation saving disabled',
             html_content=content,
+            text_content=text,
             title=title,
             description=description,
             date=timezone.now(),
@@ -94,7 +95,7 @@ class Combinator:
 
     def finalize(self):
         self.detokenizer.detokenize_document(self.base_doc)
-        title, description, content_soup = self.detokenizer.get_data()
+        title, description, content_soup, text = self.detokenizer.get_data()
 
         content_soup = self.finder.populate_anchors(content_soup)
         image_data = self.finder.get_document_image(self.base_doc)
@@ -104,6 +105,7 @@ class Combinator:
             title,
             description,
             content_soup.prettify().strip(),
+            text,
             image_data
         )
         self.report(self.original_corpus, document)

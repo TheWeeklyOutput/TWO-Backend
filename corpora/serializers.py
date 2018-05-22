@@ -18,9 +18,10 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 class GeneratedDocumentListSerializer(serializers.ModelSerializer):
     author = AuthorSerializer()
+    category = CategorySerializer()
     class Meta:
         model = GeneratedDocument
-        fields = ('title', 'slug', 'description', 'image_url', 'date', 'views', 'author')
+        fields = ('title', 'slug', 'description', 'image_url', 'date', 'views', 'author', 'category')
 
 class GeneratedDocumentSerializer(serializers.ModelSerializer):
     author = AuthorSerializer()
@@ -28,4 +29,3 @@ class GeneratedDocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneratedDocument
         fields = ('title', 'slug', 'html_content', 'image_url', 'image_credit', 'date', 'views', 'author', 'description')
-    
