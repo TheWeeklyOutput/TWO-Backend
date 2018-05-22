@@ -1,0 +1,245 @@
+<div class="layout">
+  <style>
+        body{
+            font-family: 'Droid Serif', serif;
+            font-size: 14px;
+            color: #2f2f2f;
+            background-color: #ffffff;
+        }
+
+        p{
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .content{
+            font-size: 0;
+            line-height: 0;
+            word-spacing: -.31em;
+            display: inline-block;
+            margin: 30px 2% 0 2%;
+
+
+        }
+        .collumns{
+
+        }
+
+        .collumn{
+            font-size: 14px;
+            line-height: 20px;
+            width: 17.5%;
+            display: inline-block;
+            padding: 0 1% 0 1%;
+            vertical-align: top;
+            margin-bottom: 50px;
+        }
+        .collumn + .collumn {
+          border-left: 1px solid #2f2f2f;
+        }
+        .collumn .headline{
+            text-align: center;
+            line-height: normal;
+            font-family: 'Playfair Display', serif;
+            display: block;
+            margin: 0 auto;
+
+
+        }
+        .collumn .headline.hl1{
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            padding: 10px 0 10px 0;
+
+        }
+
+        .collumn .headline.hl2{
+            font-weight: 300;
+            font-style: italic;
+            font-size: 16px;
+            box-sizing: border-box;
+            padding: 10px 0 10px 0;
+        }
+
+        .collumn .headline.hl2:before{
+            border-top: 1px solid #2f2f2f;
+            content: '';
+            width: 100px;
+            height: 7px;
+            display: block;
+            margin: 0 auto;
+        }
+        .collumn .headline.hl2:after{
+            border-bottom: 1px solid #2f2f2f;
+            content: '';
+            width: 100px;
+            height: 13px;
+            display: block;
+            margin: 0 auto;
+            font-size: 16px;
+        }
+
+        .collumn .headline.hl3{
+            font-weight: 400;
+            font-style: italic;
+            font-size: 18px;
+            box-sizing: border-box;
+            padding: 10px 0 10px 0;
+        }
+        .collumn .headline.hl4{
+            font-weight: 700;
+            font-size: 20px;
+            box-sizing: border-box;
+            padding: 10px 0 10px 0;
+        }
+        .collumn .headline.hl4:before{
+            border-top: 1px solid #2f2f2f;
+            content: '';
+            width: 100px;
+            height: 7px;
+            display: block;
+            margin: 0 auto;
+        }
+        .collumn .headline.hl4:after{
+            border-bottom: 1px solid #2f2f2f;
+            content: '';
+            width: 100px;
+            height: 10px;
+            display: block;
+            margin: 0 auto;
+
+        }
+
+        .collumn .headline.hl5{
+            font-weight: 400;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-style: italic;
+            box-sizing: border-box;
+            padding: 10px 0 10px 0;
+        }
+        .collumn .headline.hl6{
+            font-weight: 400;
+            font-size: 16px;
+            box-sizing: border-box;
+            padding: 10px 0 10px 0;
+        }
+        .collumn .headline.hl6:before{
+            border-top: 1px solid #2f2f2f;
+            content: '';
+            width: 100px;
+            height: 7px;
+            display: block;
+            margin: 0 auto;
+        }
+        .collumn .headline.hl6:after{
+            border-bottom: 1px solid #2f2f2f;
+            content: '';
+            width: 100px;
+            height: 10px;
+            display: block;
+            margin: 0 auto;
+
+        }
+        .collumn .headline.hl7{
+            font-weight: 700;
+            font-size: 12px;
+            box-sizing: border-box;
+            display: block;
+            padding: 10px 0 10px 0;
+        }
+        .collumn .headline.hl8{
+            font-weight: 700;
+            font-size: 12px;
+            box-sizing: border-box;
+            padding: 10px 0 10px 0;
+        }
+        .collumn .headline.hl9{
+            font-weight: 700;
+            font-size: 12px;
+            box-sizing: border-box;
+            padding: 10px 0 10px 0;
+        }
+        .collumn .headline.hl10{
+            font-weight: 700;
+            font-size: 12px;
+            box-sizing: border-box;
+            padding: 10px 0 10px 0;
+        }
+        .collumn .citation{
+            font-size: 36px;
+            line-height: 44px;
+            font-style: italic;
+            text-align: center;
+            font-weight: 400;
+            display: block;
+            margin: 40px 0 40px 0;
+
+        }
+        .collumn .citation:before{
+            border-top: 1px solid #2f2f2f;
+            content: '';
+            width: 100px;
+            height: 16px;
+            display: block;
+            margin: 0 auto;
+        }
+        .collumn .citation:after{
+            border-bottom: 1px solid #2f2f2f;
+            content: '';
+            width: 100px;
+            height: 16px;
+            display: block;
+            margin: 0 auto;
+        }
+        .collumn .figure {
+            margin: 0 0 20px;
+        }
+        .collumn .figcaption{
+          font-style: italic;
+          font-size: 10px;
+        }
+        .media {
+            width: 100%;
+        }
+        .collumn{
+            width: 4.5cm;
+            height: 9cm;
+            background: #fff;
+        }
+  </style>
+
+  <div class="collumns">
+      <div class="collumn">
+          <div class="head">
+            <p class="headline hl1">{{ documents.new.title }}</p>
+            <p><p class="headline hl2">by {{ documents.current.author.name }}</p></p>
+          </div>
+          <p>{{ documents.current.chars_200 }}</p>
+          <figure class="figure">
+              <img class="media" src="{{ documents.current.image_url|safe }}" alt="">
+              <figcaption class="figcaption">{{ documents.current.image_credit }}</figcaption>
+          </figure>
+          <p>{{ documents.current.chars_200 }}</p>
+      </div>
+      <div class="collumn">
+        <div class="head">
+          <p class="headline hl3">{{ documents.new.title }}</p>
+          <p><p class="headline hl4">by {{ documents.current.author.name }}</p></p>
+        </div>
+        <p>{{ documents.current.chars_200 }}</p>
+
+      </div>
+      <div class="collumn">
+        <div class="head">
+          <p class="headline hl1">{{ documents.new.title }}</p>
+          <p><p class="headline hl4">by {{ documents.current.author.name }}</p></p>
+        </div>
+        <p>{{ documents.current.chars_200 }}</p>
+
+        <p>{{ documents.current.chars_100 }}</p>
+        <p>{{ documents.current.chars_100 }}</p>
+      </div>
+  </div>
+</div>

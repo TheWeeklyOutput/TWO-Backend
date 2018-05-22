@@ -15,6 +15,7 @@ class GetByCategory(APIView):
             articles = load_generated_documents().order_by('-date')
         elif category == "latest":
             categories = Category.objects.filter(generateable=True)
+            print(categories)
             articles = zip(*(load_generated_documents(category=c).order_by('-date') \
                               for c in categories))
             print(articles)
