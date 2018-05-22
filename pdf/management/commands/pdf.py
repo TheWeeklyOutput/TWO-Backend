@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
 from backend.pdf.layout import LayoutDesigner
-from backend.pdf.print import PrintManager
+from backend.pdf.print import print_file
 from backend.pdf.wrap import Wrapper
 from backend.corpora.manager import get_active_categories, load_generated_documents
 
@@ -16,7 +16,7 @@ class Command(BaseCommand):
         parser.add_argument('--output-path', nargs=1, type=str, default=[os.path.join(settings.PDF_TEMPLATES_HTML, 'out/')])
         parser.add_argument('--layout',  nargs=1, type=str, default=["all"])
         parser.add_argument('--generate-new', nargs=1, type=bool, default=[False])
-        parser.add_argument('--print', nargs=1, type=bool, default=[False])
+        parser.add_argument('--printer', nargs=1, type=str, default=[False])
         parser.add_argument('--amount', nargs=1, type=int, default=[1])
 
         parser.add_argument('--random', nargs=1, type=bool, default=[False])
@@ -56,18 +56,19 @@ class Command(BaseCommand):
     def design(self, designer, **kwargs):
         layout = kwargs.pop("layout")[0]
         output_path = kwargs.pop("output_path")[0]
-        prnt = kwargs.pop("print")[0]
+        printer = kwargs.pop("printer")[0]
         if layout == "all":
             documents = self.docs(**kwargs)
             for string, documents in designer.all_layouts(documents):
-              self.wrap(string, output_path, documents, prnt)
+              self.wrap(string, output_path, documents, printer)
         elif layout == "random":
             documents = self.docs(**kwargs)
             string = designer.random_layout(documents)
-            self.wrap(string, output_path, documents, prnt)
+            self.wrap(string, output_path, documents, printer)
 
-    def wrap(self, string, output_path, docs, prnt):
+    def wrap(self, string, output_path, docs, printer):
       wrapper = Wrapper()
-      pdf = wrapper.from_string(string, output_path + docs[0].slug +".pdf")
-      if prnt:
-         raise NotImplementedError
+      pdf_path = output_path + docs[0].slug +".pdf"
+      pdf = wrapper.from_string(string, pdf_path)
+      if printer:
+        print_file(pdf_path, printer=printer)
