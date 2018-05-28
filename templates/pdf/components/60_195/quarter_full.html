@@ -1,0 +1,37 @@
+<div class="layout">
+    <style>
+        .quarter-full {
+            width: 19.5cm;
+            height: 6cm;
+            padding: 0.3cm 0;
+        }
+
+        .quater-full .article .headline {
+            font-size: 5.3cm;
+        }
+
+        .quarter-full .article .content {
+            font-size: 0.4cm;
+            font-weight: 400;
+            padding: 0.3cm 0;
+        }
+
+        .quarter-full .article .image {
+            margin: auto;
+            display: block;    
+        }
+
+        .quarter-full .article {
+            column-count: 2;
+        }
+
+
+    </style>
+    <div class="quarter-full">
+        <div class="article">
+            <h3 class="headline">{{ documents.new.title }}</h3>
+            <p class="content">{{ documents.current.chars_200 }}</p>
+            <img class="image" src="{{ documents.current.image_url|safe }}" alt="">
+        </div>
+    </div>
+</div>

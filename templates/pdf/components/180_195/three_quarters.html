@@ -1,0 +1,99 @@
+<div class="layout">
+        <style>
+            .three-quarters {
+                width: 19.5cm;
+                height: 18cm
+            }
+
+            .three-quarters .article.one {
+                width: 7.8cm;
+                float: left;
+
+            }
+
+            .three-quarters .article.one .content {
+                font-weight: 400;
+                columns: 2;
+                font-size: 0.33cm
+            }
+
+            .three-quarters .article.one .headline {
+                font-size: 0.7cm;
+            }
+
+            .three-quarters .article.two {
+                width: 7.8cm;
+                columns: 2;
+                padding-top: 0.7cm;
+                padding-right: 2cm;
+            }
+
+            .three-quarters .article.two .headline {
+                font-size: 0.45cm;
+            }
+
+            .three-quarters .article.two .image {
+                width: 3.7cm;
+                padding-top: 0.3cm;
+            }
+
+            .three-quarters .article.three {
+                width: 7.8cm;
+                float: right;
+            }
+
+            .three-quarters .article.three .content {
+               columns: 2;
+            }
+
+            .three-quarters .article.four {
+                width: 3cm;
+                float: right;
+            }
+
+            .three-quarters .article.four {
+                width: 3.5cm;
+                float: right;
+                height: 100%;
+            }
+            
+            .three-quarters .article.four .headline{
+                text-align: center;
+            }
+
+            .three-quarters .article.four .bottom-line {
+                width: 30%;
+                height: 0.035cm;
+                background-color: black;
+                border: none;
+                margin: 10% auto;
+            }
+
+
+
+        </style>
+      
+    <div class="three-quarters">
+        <div class="article one">
+            <h1 class="headline">{{ documents.new.title }}</h1>
+            <p class="content">{{ documents.current.chars_500 }}</p>
+        </div>
+        <div class="article four">
+            <h2 class="headline">{{ documents.new.title }}</h2>
+            <hr class="bottom-line">
+            <p class="content">{{ documents.current.chars_200 }}</p>
+            <img class="image" src="{{ documents.current.image_url|safe }}" alt="">
+        </div>
+        <div class="article three">
+            <h1 class="headline">{{ documents.new.title }}</h1>            
+            <p class="content">{{ documents.current.chars_500 }}</p>
+        </div>
+
+        <div class="article two">
+            <h2 class="headline">{{ documents.new.title }}</h2>
+            <p class="content">{{ documents.current.chars_100 }}</p>
+            <img class="image" src="{{ documents.current.image_url|safe }}" alt="">
+        </div>
+                        
+    </div>
+</div>

@@ -1,0 +1,85 @@
+<div class="layout">
+<style>
+    .half-full {
+        width: 19.5cm;
+        height: 12cm;
+        padding-top: 0.3cm
+    }
+
+    .component-120_195 {
+        padding-bottom: 0.3cm;
+    }
+    .half-full .article.one .headline {
+        font-size: 1cm;
+        padding: 0.2cm;
+        margin-right: 0.2cm;
+        border-top: solid 0.07cm;    
+    }
+    .half-full .article.one {
+        width: 15.2cm;
+        float: left;
+        border-right: solid 0.02cm;
+    }
+    .half-full .article.one .content {
+        columns: 4;
+        width: 15cm;
+        display: block;
+        text-align: justify;
+    }
+
+    .half-full .article.one .author {
+        padding: 0.2cm 0;
+        margin-bottom: 0.4cm;
+        margin-top: 0.2cm;
+        border-top: solid 0.02cm;
+        border-bottom: solid 0.02cm;
+        width: 100%;
+        text-align: center;
+        display: inline-block;
+    }
+
+    .half-full .article.one .image {
+        width: 3.0cm;
+        margin: auto;
+        display: block;
+        text-align: center;
+        padding-top: 1cm;    
+    }
+
+    .half-full .article.two {
+        width: 3.5cm;
+        float: right;
+        height: 100%;
+    }
+    
+    .half-full .article.two .headline{
+        text-align: center;
+    }
+
+    .half-full .article.two .bottom-line {
+        width: 30%;
+        height: 0.035cm;
+        background-color: black;
+        border: none;
+        margin: 10% auto;
+    }
+
+</style>
+<div class="half-full">
+    <div class="article one">
+        <h1 class="headline">{{ documents.new.title }}</h1>
+        <p class="content">
+            <span class="author">by {{ documents.current.author.name }}</span>
+            {{ documents.current.chars_1000 }}
+        </p>
+    </div>
+    <div class="article two">
+        <h2 class="headline">{{ documents.new.title }}</h2>
+        <hr class="bottom-line">
+        <p class="content">
+            {{ documents.current.chars_100 }}
+        </p>
+    </div>
+</div>
+
+</div>

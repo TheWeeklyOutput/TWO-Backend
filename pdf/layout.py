@@ -46,13 +46,21 @@ class LayoutDesigner:
         return "pdf/components/{0}/{1}".format(_type, random.choice(templates))
 
     @property
-    def component_18_21(self):
-      return self.random_component("18_21")
+    def component_245_195(self):
+      return self.random_component("245_195")
 
     @property
-    def component_7_21(self):
-      return self.random_component("7_21")
+    def component_245_85(self):
+      return self.random_component("245_85")
 
     @property
-    def component_11_21(self):
-      return self.random_component("11_21")
+    def component_180_195(self):
+      return self.random_component("180_195")
+    
+    @property
+    def component_120_195(self):
+      return self.random_component("120_195")
+    
+    @property
+    def component_60_195(self):
+      return self.random_component("60_195")

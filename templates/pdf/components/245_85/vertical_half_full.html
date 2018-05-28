@@ -1,0 +1,41 @@
+<div class="layout">
+    <style>
+        .half-full {
+            width: 9.5cm;
+            height: 24.5cm;
+        }
+
+        .half-full .article.one {
+            border: solid 0.05cm;
+        }
+
+        .half-full .article.one .headline {
+            text-align: center;
+            font-weight: 400;
+            font-size: 0.7cm;
+            padding: 0.7cm;
+            padding-top: 0.5cm;
+        }
+
+        .half-full .article.one .content {
+            font-size: 0.45cm;
+            text-align: justify;
+            padding: 0.3cm;
+        }
+
+        .half-full .article.one .image {
+            display: block;
+            margin: auto;
+            padding: 0.4cm 0;
+        }
+
+    </style>
+    <div class="half-full">
+        <div class="article one">
+            <h1 class="headline">{{ documents.new.title }}</h1>
+            <p class="content">{{ documents.current.chars_800 }}</p>
+            <img class="image" src="{{ documents.current.image_url|safe }}" alt="">
+        </div>
+    </div>
+</div>
+        

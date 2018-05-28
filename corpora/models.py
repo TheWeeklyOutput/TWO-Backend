@@ -137,7 +137,6 @@ class GeneratedDocument(Document):
     def get_next(self, amount):
         if self.sentences is None:
           self.sentences = self.text_content.split(".")
-
         res = []
         for sentence in self.sentences:
           if (len(".".join(res)) + len(sentence)) <= amount:
@@ -154,12 +153,20 @@ class GeneratedDocument(Document):
         return self.get_next(200)
 
     @property
+    def chars_400(self):
+        return self.get_next(400)
+
+    @property
     def chars_500(self):
         return self.get_next(500)
 
     @property
+    def chars_800(self):
+        return self.get_next(800)
+    
+    @property
     def chars_1000(self):
-        return self.get_next(100)
+        return self.get_next(1000)
 
     def save(self, *args, **kwargs):
         super(GeneratedDocument, self).save(*args, **kwargs)
