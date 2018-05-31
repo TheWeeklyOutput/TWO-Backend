@@ -159,7 +159,7 @@ class GeneratedDocument(Document):
 
     @property
     def chars_1000(self):
-        return self.get_next(100)
+        return self.get_next(1000)
 
     def save(self, *args, **kwargs):
         super(GeneratedDocument, self).save(*args, **kwargs)
