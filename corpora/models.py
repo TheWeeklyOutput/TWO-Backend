@@ -203,8 +203,8 @@ class GeneratedDocument(Document):
         },
         "headline": self.title,
         "image": [ self.image_url ],
-        "datePublished": self.date.isoformat,
-        "dateModified": self.date.isoformat,
+        "datePublished": self.date.isoformat(),
+        "dateModified": self.date.isoformat(),
         "author": {
           "@type": "Person",
           "name": self.author.name
@@ -223,6 +223,7 @@ class GeneratedDocument(Document):
       }
       return json.dumps(sd_dict)
 
+    @property
     def human_url(self):
         return "https://www.weekly-output.com/articles/{0}/{1}/".format(
           self.category.slug,
