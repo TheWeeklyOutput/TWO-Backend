@@ -2,11 +2,13 @@
 <html itemscope itemtype="http://schema.org/Article">
     <head>
         <title>{{ article.title }} | The Weekly Output</title>
-        <meta name="description" content="{{ article.description }}" />
 
         <meta itemprop="name" content="{{ article.title }}">
         <meta itemprop="description" content="{{ article.description }}">
         <meta itemprop="image" content="{{ article.image_url }}">
+        <meta itemprop="author" content="{{ article.author.name }}">
+
+        <meta name="description" content="{{ article.description }}" />
 
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="@theweeklyoutput">
@@ -17,7 +19,7 @@
 
         <meta property="og:title" content="{{ article.title }}" />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content="https://www.weekly-output.com/articles/{{ article.category.slug }}/{{ article.slug }}/" />
+        <meta property="og:url" content="{{ article.human_url }}" />
         <meta property="og:image" content="{{ article.image_url }}" />
         <meta property="og:description" content="{{ article.description }}" />
         <meta property="og:site_name" content="The Weekly Output | News for the careful reader" />
@@ -27,9 +29,20 @@
         <meta property="article:tag" content="{{ article.category.name }}" />
         <meta property="fb:admins" content="517738711959934" />
 
-        <meta http-equiv="refresh" content="1;url=https://www.weekly-output.com/articles/{{ article.category.slug }}/{{ article.slug }}/">
+        <meta http-equiv="refresh" content="1;url={{ article.human_url }}">
+        <script type="application/ld+json">
+           {{ article.breadcrumbs_json|safe }}
+        </script>
+        <script type="application/ld+json">
+           {{ article.sd_json|safe }}
+        </script>
     </head>
     <body>
+      <div>
+        <h1> {{ article.title|safe }} </h1> <br>
+        <span> {{ article.category.name|safe }} </span> <br>
+        <span> {{ article.author.name|safe }} </span> <br>
+      </div>
       {{ article.html_content|safe }}
     </body>
 </html>

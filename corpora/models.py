@@ -1,4 +1,5 @@
 import re
+import json
 from django.db import models
 
 class AutomaticSlugModel(models.Model):
@@ -160,6 +161,73 @@ class GeneratedDocument(Document):
     @property
     def chars_1000(self):
         return self.get_next(1000)
+
+    @property
+    def breadcrumbs_json(self):
+        crumbs_dict = {
+          "@context": "http://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@id": "/".join(self.human_url.split("/")[:3]),
+              "name": "News",
+            }
+          },{
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@id": "/".join(self.human_url.split("/")[:5]),
+              "name": self.category.name,
+            }
+          },{
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@id": "/".join(self.human_url.split("/")[:6]),
+              "name": self.title,
+            }
+          }]
+        }
+        return json.dumps(crumbs_dict)
+
+    @property
+    def sd_json(self):
+      sd_dict = {
+        "@context": "http://schema.org",
+        "@type": "NewsArticle",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": self.human_url
+        },
+        "headline": self.title,
+        "image": [ self.image_url ],
+        "datePublished": self.date.isoformat,
+        "dateModified": self.date.isoformat,
+        "author": {
+          "@type": "Person",
+          "name": self.author.name
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "The Weekly Output",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://pbs.twimg.com/profile_images/983029147332116480/RdzTRLF8_400x400.jpg", # TMP
+            "width": 400, "height": 400
+          }
+        },
+        "description": self.description,
+        "interactionCount": str(self.views)
+      }
+      return json.dumps(sd_dict)
+
+    def human_url(self):
+        return "https://www.weekly-output.com/articles/{0}/{1}/".format(
+          self.category.slug,
+          self.slug
+        )
 
     def save(self, *args, **kwargs):
         super(GeneratedDocument, self).save(*args, **kwargs)
