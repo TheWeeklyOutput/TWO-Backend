@@ -8,3 +8,5 @@ storage/xml/*
 
 !storage/xml
 !storage/xml/default.xml
+
+templates/pdf/out/*
